@@ -371,6 +371,31 @@ main {
   outline: none;
 }
 
+.inventory-weight-summary {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.inventory-weight-summary h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.weight-total {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: var(--accent);
+}
+
+.weight-disclaimer {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .inventory-room {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -401,6 +426,12 @@ main {
   font-size: 0.9rem;
 }
 
+.inventory-room-weight {
+  margin: 0.75rem 0 0;
+  color: var(--text);
+  font-weight: 600;
+}
+
 .inventory-items {
   margin: 1rem 0 0;
   padding-left: 0;
@@ -418,8 +449,31 @@ main {
   background: var(--bg);
 }
 
+.inventory-item-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
 .inventory-item strong {
   font-weight: 600;
+}
+
+.inventory-item-weight {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.inventory-item-weight input {
+  width: 110px;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-family: inherit;
 }
 
 .inventory-notes {
