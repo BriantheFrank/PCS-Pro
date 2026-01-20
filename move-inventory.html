@@ -81,27 +81,81 @@
             <button type="button" class="label-action" id="print-label-button">
               Print Label
             </button>
+            <button type="button" class="label-action" id="download-label-button">
+              Download Label
+            </button>
             <button type="button" class="label-action secondary" id="close-label-button">
               Close
             </button>
           </div>
         </div>
-        <div class="print-label" id="print-label">
-          <div class="label-row">
-            <span class="label-key">Box:</span>
-            <span class="label-value" id="label-title">Box Label</span>
+        <div class="label-panel-body">
+          <div class="label-editor">
+            <div class="label-editor-section">
+              <h3>Label text</h3>
+              <label>
+                Label title
+                <input id="label-title-input" type="text" />
+              </label>
+              <label>
+                Room name
+                <input id="label-room-input" type="text" />
+              </label>
+              <label>
+                Estimated weight
+                <input id="label-weight-input" type="text" />
+              </label>
+              <label>
+                Notes (optional)
+                <textarea id="label-notes-input" rows="3"></textarea>
+              </label>
+            </div>
+            <div class="label-editor-section">
+              <h3>Font size</h3>
+              <label class="label-size-control">
+                Title size
+                <input
+                  id="label-title-size"
+                  type="range"
+                  min="18"
+                  max="36"
+                  step="1"
+                />
+                <span id="label-title-size-value">26px</span>
+              </label>
+              <label class="label-size-control">
+                Body size
+                <input
+                  id="label-body-size"
+                  type="range"
+                  min="14"
+                  max="28"
+                  step="1"
+                />
+                <span id="label-body-size-value">18px</span>
+              </label>
+            </div>
           </div>
-          <div class="label-row">
-            <span class="label-key">Room:</span>
-            <span class="label-value" id="label-room">Room</span>
-          </div>
-          <div class="label-row">
-            <span class="label-key">Est. Weight:</span>
-            <span class="label-value" id="label-weight">Weight</span>
-          </div>
-          <div class="label-row" id="label-notes-row" hidden>
-            <span class="label-key">Notes:</span>
-            <span class="label-value" id="label-notes"></span>
+          <div class="label-preview">
+            <p class="label-preview-title">Live preview</p>
+            <div class="print-label" id="print-label">
+              <div class="label-row">
+                <span class="label-key">Box:</span>
+                <span class="label-value" id="label-title">Box Label</span>
+              </div>
+              <div class="label-row">
+                <span class="label-key">Room:</span>
+                <span class="label-value" id="label-room">Room</span>
+              </div>
+              <div class="label-row">
+                <span class="label-key">Est. Weight:</span>
+                <span class="label-value" id="label-weight">Weight</span>
+              </div>
+              <div class="label-row" id="label-notes-row" hidden>
+                <span class="label-key">Notes:</span>
+                <span class="label-value" id="label-notes"></span>
+              </div>
+            </div>
           </div>
         </div>
       </section>

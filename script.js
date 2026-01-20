@@ -251,7 +251,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
                             data-room-index="${roomIndex}"
                             data-item-index="${itemIndex}"
                           >
-                            View Label
+                            Edit Label
                           </button>
                           <button
                             type="button"
@@ -419,24 +419,225 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   const labelWeight = document.querySelector("#label-weight");
   const labelNotes = document.querySelector("#label-notes");
   const labelNotesRow = document.querySelector("#label-notes-row");
+  const labelTitleInput = document.querySelector("#label-title-input");
+  const labelRoomInput = document.querySelector("#label-room-input");
+  const labelWeightInput = document.querySelector("#label-weight-input");
+  const labelNotesInput = document.querySelector("#label-notes-input");
+  const labelTitleSizeInput = document.querySelector("#label-title-size");
+  const labelBodySizeInput = document.querySelector("#label-body-size");
+  const labelTitleSizeValue = document.querySelector("#label-title-size-value");
+  const labelBodySizeValue = document.querySelector("#label-body-size-value");
   const printLabelButton = document.querySelector("#print-label-button");
+  const downloadLabelButton = document.querySelector("#download-label-button");
   const closeLabelButton = document.querySelector("#close-label-button");
+  const printLabel = document.querySelector("#print-label");
 
-  const openLabelPanel = (room, item) => {
-    if (!labelPanel || !labelTitle || !labelRoom || !labelWeight) {
+  const defaultLabelSettings = (room, item) => ({
+    title: item.label,
+    room: room.name,
+    weight: `${item.weight} lbs`,
+    notes: item.notes || "",
+    titleSize: 26,
+    bodySize: 18,
+  });
+
+  const ensureLabelSettings = (room, item) => {
+    if (!item.labelSettings) {
+      item.labelSettings = defaultLabelSettings(room, item);
+    }
+    const defaults = defaultLabelSettings(room, item);
+    item.labelSettings = {
+      ...defaults,
+      ...item.labelSettings,
+    };
+    return item.labelSettings;
+  };
+
+  const applyLabelPreview = (settings) => {
+    if (!labelTitle || !labelRoom || !labelWeight || !labelNotes || !printLabel) {
       return;
     }
-    activeLabelItem = { room, item };
-    labelTitle.textContent = item.label;
-    labelRoom.textContent = room.name;
-    labelWeight.textContent = `${item.weight} lbs`;
-    labelNotes.textContent = item.notes ? item.notes : "";
+    labelTitle.textContent = settings.title || "Box Label";
+    labelRoom.textContent = settings.room || "Room";
+    labelWeight.textContent = settings.weight || "Weight";
+    labelNotes.textContent = settings.notes || "";
     if (labelNotesRow) {
-      labelNotesRow.hidden = !item.notes;
+      labelNotesRow.hidden = !settings.notes;
     }
+    printLabel.style.setProperty("--label-title-size", `${settings.titleSize}px`);
+    printLabel.style.setProperty("--label-body-size", `${settings.bodySize}px`);
+  };
+
+  const syncLabelInputs = (settings) => {
+    if (labelTitleInput) {
+      labelTitleInput.value = settings.title;
+    }
+    if (labelRoomInput) {
+      labelRoomInput.value = settings.room;
+    }
+    if (labelWeightInput) {
+      labelWeightInput.value = settings.weight;
+    }
+    if (labelNotesInput) {
+      labelNotesInput.value = settings.notes;
+    }
+    if (labelTitleSizeInput) {
+      labelTitleSizeInput.value = settings.titleSize;
+    }
+    if (labelBodySizeInput) {
+      labelBodySizeInput.value = settings.bodySize;
+    }
+    if (labelTitleSizeValue) {
+      labelTitleSizeValue.textContent = `${settings.titleSize}px`;
+    }
+    if (labelBodySizeValue) {
+      labelBodySizeValue.textContent = `${settings.bodySize}px`;
+    }
+  };
+
+  const getActiveLabelContext = () => {
+    if (!activeLabelItem) {
+      return null;
+    }
+    const room = inventory.rooms[activeLabelItem.roomIndex];
+    const item = room?.items[activeLabelItem.itemIndex];
+    if (!room || !item) {
+      return null;
+    }
+    return { room, item };
+  };
+
+  const openLabelPanel = (roomIndex, itemIndex) => {
+    if (!labelPanel) {
+      return;
+    }
+    const room = inventory.rooms[roomIndex];
+    const item = room?.items[itemIndex];
+    if (!room || !item) {
+      return;
+    }
+    activeLabelItem = { roomIndex, itemIndex };
+    const labelSettings = ensureLabelSettings(room, item);
+    saveInventory(inventory);
+    syncLabelInputs(labelSettings);
+    applyLabelPreview(labelSettings);
     labelPanel.hidden = false;
     labelPanel.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const updateLabelSetting = (field, value) => {
+    const context = getActiveLabelContext();
+    if (!context) {
+      return;
+    }
+    const labelSettings = ensureLabelSettings(context.room, context.item);
+    labelSettings[field] = value;
+    applyLabelPreview(labelSettings);
+    saveInventory(inventory);
+  };
+
+  const slugify = (text) =>
+    text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "label";
+
+  const escapeHtml = (value) =>
+    String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  // Label file generation is handled client-side to avoid any backend dependency.
+  const buildLabelFile = (settings) => {
+    const safeTitle = escapeHtml(settings.title);
+    const safeRoom = escapeHtml(settings.room);
+    const safeWeight = escapeHtml(settings.weight);
+    const safeNotes = escapeHtml(settings.notes);
+    const notesMarkup = settings.notes
+      ? `<div class="label-row"><span class="label-key">Notes:</span><span class="label-value label-body">${safeNotes}</span></div>`
+      : "";
+    return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>${safeTitle} Label</title>
+    <style>
+      body { margin: 0; padding: 2rem; font-family: "Inter", "Roboto", "Segoe UI", system-ui, sans-serif; background: #ffffff; }
+      .print-label { border: 2px solid #111827; border-radius: 12px; padding: 1.5rem; display: grid; gap: 0.75rem; }
+      .label-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; }
+      .label-key { font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.85rem; }
+      .label-value { font-weight: 600; color: #111827; }
+      .label-title { font-size: ${settings.titleSize}px; }
+      .label-body { font-size: ${settings.bodySize}px; }
+      @media print {
+        body { padding: 0; }
+        .print-label { page-break-inside: avoid; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="print-label">
+      <div class="label-row">
+        <span class="label-key">Box:</span>
+        <span class="label-value label-title">${safeTitle}</span>
+      </div>
+      <div class="label-row">
+        <span class="label-key">Room:</span>
+        <span class="label-value label-body">${safeRoom}</span>
+      </div>
+      <div class="label-row">
+        <span class="label-key">Est. Weight:</span>
+        <span class="label-value label-body">${safeWeight}</span>
+      </div>
+      ${notesMarkup}
+    </div>
+  </body>
+</html>`;
+  };
+
+  if (labelTitleInput) {
+    labelTitleInput.addEventListener("input", (event) => {
+      updateLabelSetting("title", event.target.value);
+    });
+  }
+  if (labelRoomInput) {
+    labelRoomInput.addEventListener("input", (event) => {
+      updateLabelSetting("room", event.target.value);
+    });
+  }
+  if (labelWeightInput) {
+    labelWeightInput.addEventListener("input", (event) => {
+      updateLabelSetting("weight", event.target.value);
+    });
+  }
+  if (labelNotesInput) {
+    labelNotesInput.addEventListener("input", (event) => {
+      updateLabelSetting("notes", event.target.value);
+    });
+  }
+  if (labelTitleSizeInput) {
+    labelTitleSizeInput.addEventListener("input", (event) => {
+      const size = Number(event.target.value) || 26;
+      if (labelTitleSizeValue) {
+        labelTitleSizeValue.textContent = `${size}px`;
+      }
+      updateLabelSetting("titleSize", size);
+    });
+  }
+  if (labelBodySizeInput) {
+    labelBodySizeInput.addEventListener("input", (event) => {
+      const size = Number(event.target.value) || 18;
+      if (labelBodySizeValue) {
+        labelBodySizeValue.textContent = `${size}px`;
+      }
+      updateLabelSetting("bodySize", size);
+    });
+  }
 
   if (printLabelButton) {
     printLabelButton.addEventListener("click", () => {
@@ -444,6 +645,27 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
         return;
       }
       window.print();
+    });
+  }
+
+  if (downloadLabelButton) {
+    downloadLabelButton.addEventListener("click", () => {
+      const context = getActiveLabelContext();
+      if (!context) {
+        return;
+      }
+      const settings = ensureLabelSettings(context.room, context.item);
+      const fileContents = buildLabelFile(settings);
+      const filename = `${slugify(settings.title || settings.room)}-label.html`;
+      const blob = new Blob([fileContents], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
     });
   }
 
@@ -467,11 +689,11 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       return;
     }
     if (actionButton.dataset.action === "view-label") {
-      openLabelPanel(room, item);
+      openLabelPanel(roomIndex, itemIndex);
     }
     if (actionButton.dataset.action === "print-label") {
-      openLabelPanel(room, item);
-      window.print();
+      openLabelPanel(roomIndex, itemIndex);
+      setTimeout(() => window.print(), 50);
     }
   });
 

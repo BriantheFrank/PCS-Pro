@@ -572,6 +572,73 @@ main {
   flex-wrap: wrap;
 }
 
+.label-panel-body {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+}
+
+.label-editor {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.label-editor-section {
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.label-editor-section h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.label-editor label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.label-editor input,
+.label-editor textarea {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.label-size-control {
+  gap: 0.5rem;
+}
+
+.label-size-control input[type="range"] {
+  width: 100%;
+}
+
+.label-size-control span {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.label-preview {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.label-preview-title {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
 .label-eyebrow {
   margin: 0 0 0.35rem;
   text-transform: uppercase;
@@ -581,12 +648,15 @@ main {
 }
 
 .print-label {
+  --label-title-size: 26px;
+  --label-body-size: 18px;
   border: 2px solid var(--border);
   border-radius: 12px;
   padding: 1.5rem;
   display: grid;
   gap: 0.75rem;
   background: #ffffff;
+  color: #111827;
 }
 
 
@@ -599,11 +669,19 @@ main {
 
 .label-key {
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
 }
 
 .label-value {
   font-weight: 600;
   color: var(--text);
+  font-size: var(--label-body-size);
+}
+
+#label-title {
+  font-size: var(--label-title-size);
 }
 
 .inventory-notes {
@@ -627,7 +705,9 @@ main {
   footer,
   .inventory-controls,
   #rooms-container,
-  .label-panel-header {
+  .label-panel-header,
+  .label-editor,
+  .label-preview-title {
     display: none !important;
   }
 
@@ -651,6 +731,10 @@ main {
   .top-bar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .label-panel-body {
+    grid-template-columns: 1fr;
   }
 
   .checklist-section {
