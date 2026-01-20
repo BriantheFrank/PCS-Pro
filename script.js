@@ -83,6 +83,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   let inventory = loadInventory();
   let currentQuery = "";
   let activeLabelItem = null;
+  let openRoomIndexes = new Set();
 
   const normalize = (value) => value.trim().toLowerCase();
 
@@ -458,8 +459,12 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
               .join("")}
           </ul>`;
 
+    const shouldOpen = filteredQuery || openRoomIndexes.has(roomIndex);
+
     return `
-      <details class="inventory-room" ${filteredQuery ? "open" : ""}>
+      <details class="inventory-room" data-room-index="${roomIndex}" ${
+        shouldOpen ? "open" : ""
+      }>
         <summary>
           <h3>${room.name}</h3>
           <span class="inventory-room-meta">${itemCount} items</span>
@@ -495,6 +500,15 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
 
   // Render all rooms based on current search query and stored state.
   const renderRooms = () => {
+    if (!currentQuery) {
+      openRoomIndexes = new Set(
+        Array.from(roomsContainer.querySelectorAll(".inventory-room"))
+          .filter((roomCard) => roomCard.open)
+          .map((roomCard) => Number(roomCard.dataset.roomIndex))
+          .filter((roomIndex) => !Number.isNaN(roomIndex))
+      );
+    }
+
     if (inventory.rooms.length === 0) {
       roomsContainer.innerHTML = `
         <section class="info-panel">
@@ -885,6 +899,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     }
     const action = actionButton.dataset.action;
     if (action === "toggle-item-menu") {
+      // Toggle menus explicitly on click and ensure only one menu is open.
       const menuWrapper = actionButton.closest(".inventory-item-menu");
       const menu = menuWrapper?.querySelector(".item-menu-dropdown");
       if (!menu || !menuWrapper) {
