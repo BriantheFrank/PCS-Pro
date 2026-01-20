@@ -32,6 +32,26 @@ checkboxes.forEach((checkbox) => {
   });
 });
 
+// Accordion behavior for checklist sections.
+const checklistSections = Array.from(
+  document.querySelectorAll(".checklist-section")
+);
+
+if (checklistSections.length > 0) {
+  checklistSections.forEach((section) => {
+    section.addEventListener("toggle", () => {
+      if (!section.open) {
+        return;
+      }
+      checklistSections.forEach((otherSection) => {
+        if (otherSection !== section) {
+          otherSection.removeAttribute("open");
+        }
+      });
+    });
+  });
+}
+
 // Move inventory state management using localStorage.
 const INVENTORY_KEY = "pcs-move-inventory";
 
