@@ -3,243 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PCS Move Checklist</title>
+    <title>PCS Move Planner</title>
     <!--
-      Simple, static page structure with semantic sections.
-      All behavior is driven by script.js and all styling by styles.css.
+      Home page entry point for the PCS Move Planner.
+      Navigation and layout styles are shared across all pages.
     -->
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="site-header">
       <div class="container">
+        <!--
+          Shared top navigation keeps every page within one click.
+        -->
+        <div class="top-bar">
+          <a class="brand" href="index.html">PCS Move Planner</a>
+          <nav class="site-nav">
+            <a href="pcs-checklist.html">PCS Checklist</a>
+            <a href="move-organizer.html">Move Organizer</a>
+            <a href="bases.html">Destination Bases</a>
+          </nav>
+        </div>
         <p class="eyebrow">U.S. Military PCS Toolkit</p>
-        <h1>PCS Move Checklist</h1>
+        <h1>Plan your PCS move with confidence.</h1>
         <p class="subtitle">
-          A practical, offline-friendly checklist to guide each phase of your
-          Permanent Change of Station move.
+          PCS Move Planner is a simple, offline-friendly companion that keeps
+          your timeline, tasks, and move essentials organized in one place.
         </p>
       </div>
     </header>
 
     <main class="container">
       <!--
-        Each section groups related PCS milestones.
-        Checkboxes are wired up by script.js and persisted via localStorage.
+        Navigation cards guide users to each major feature.
       -->
-      <section class="checklist-section" data-section="orders">
-        <h2>Orders Received</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="orders-review" />
-            <span class="item-title">Review your PCS orders carefully</span>
-          </label>
-          <p class="item-help">
-            Confirm report dates, gaining unit, and any special instructions so
-            you can plan timelines correctly.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="orders-deros" />
-            <span class="item-title">Verify DEROS or report date changes</span>
-          </label>
-          <p class="item-help">
-            Ask your chain of command if your date shifted or requires official
-            amendments.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="orders-family" />
-            <span class="item-title">Notify family and key contacts</span>
-          </label>
-          <p class="item-help">
-            Share the move timeline with spouses, caregivers, and anyone helping
-            with dependents.
-          </p>
-        </div>
+      <section class="card-grid">
+        <a class="nav-card" href="pcs-checklist.html">
+          <h2>PCS Checklist</h2>
+          <p>Step-by-step guide to completing a PCS move.</p>
+          <span class="card-link">Open checklist →</span>
+        </a>
+        <a class="nav-card" href="move-organizer.html">
+          <h2>Move Organizer</h2>
+          <p>Organize and label household goods (coming soon).</p>
+          <span class="card-link">View details →</span>
+        </a>
+        <a class="nav-card" href="bases.html">
+          <h2>Destination Bases</h2>
+          <p>Learn about your next duty station (coming soon).</p>
+          <span class="card-link">Explore bases →</span>
+        </a>
       </section>
 
-      <section class="checklist-section" data-section="planning">
-        <h2>Pre-Move Planning</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="planning-budget" />
-            <span class="item-title">Estimate your move budget</span>
-          </label>
-          <p class="item-help">
-            Track expected travel costs, temporary lodging, and out-of-pocket
-            expenses to reduce surprises.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="planning-housing" />
-            <span class="item-title">Research housing at the new duty station</span>
-          </label>
-          <p class="item-help">
-            Compare on-post and off-post options, waitlists, and neighborhood
-            commute times.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="planning-records" />
-            <span class="item-title">Collect medical, school, and pet records</span>
-          </label>
-          <p class="item-help">
-            Store copies of vaccinations, school transcripts, and vet
-            documentation for easy check-in.
-          </p>
-        </div>
-      </section>
-
-      <section class="checklist-section" data-section="scheduling">
-        <h2>Scheduling Movers</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="scheduling-ppms" />
-            <span class="item-title">Decide between HHG shipment or PPM</span>
-          </label>
-          <p class="item-help">
-            Choose a government-arranged move or personally procured move and
-            document the decision.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="scheduling-dates" />
-            <span class="item-title">Schedule pack-out and pickup dates</span>
-          </label>
-          <p class="item-help">
-            Coordinate with the transportation office to lock in packing and
-            pickup windows.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="scheduling-weight" />
-            <span class="item-title">Confirm your weight allowance</span>
-          </label>
-          <p class="item-help">
-            Verify authorized weight limits to avoid excess weight charges and
-            plan accordingly.
-          </p>
-        </div>
-      </section>
-
-      <section class="checklist-section" data-section="packing">
-        <h2>Packing Period</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="packing-essentials" />
-            <span class="item-title">Set aside an essentials bag</span>
-          </label>
-          <p class="item-help">
-            Keep uniforms, documents, medications, and chargers with you for the
-            travel days.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="packing-photos" />
-            <span class="item-title">Take photos of high-value items</span>
-          </label>
-          <p class="item-help">
-            Document electronics, furniture, and serial numbers to support any
-            damage claims.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="packing-inventory" />
-            <span class="item-title">Review the inventory with movers</span>
-          </label>
-          <p class="item-help">
-            Verify each box and item count to ensure accuracy before the truck
-            departs.
-          </p>
-        </div>
-      </section>
-
-      <section class="checklist-section" data-section="clearing">
-        <h2>Clearing the Installation</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="clearing-appointments" />
-            <span class="item-title">Schedule final out-processing appointments</span>
-          </label>
-          <p class="item-help">
-            Book finance, medical, and housing appointments early so you can
-            finish all signatures.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="clearing-turnins" />
-            <span class="item-title">Turn in gear and clear your unit</span>
-          </label>
-          <p class="item-help">
-            Return issued equipment, receive clearance stamps, and keep copies
-            of all paperwork.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="clearing-travel" />
-            <span class="item-title">Confirm travel plans and receipts</span>
-          </label>
-          <p class="item-help">
-            Finalize flights, lodging, or POV route plans and save receipts for
-            travel vouchers.
-          </p>
-        </div>
-      </section>
-
-      <section class="checklist-section" data-section="arrival">
-        <h2>Arrival and Delivery</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="arrival-checkin" />
-            <span class="item-title">Check in with your new unit</span>
-          </label>
-          <p class="item-help">
-            Report to your gaining command and confirm in-processing schedules
-            as soon as you arrive.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="arrival-delivery" />
-            <span class="item-title">Schedule household goods delivery</span>
-          </label>
-          <p class="item-help">
-            Coordinate delivery dates and be present to inspect items at arrival.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="arrival-claims" />
-            <span class="item-title">File any loss or damage claims</span>
-          </label>
-          <p class="item-help">
-            Submit claims quickly using your move portal with photos and
-            inventory notes.
-          </p>
-        </div>
+      <!--
+        Quick explanation reinforces what the site does.
+      -->
+      <section class="info-panel">
+        <h2>Built for PCS life</h2>
+        <p>
+          Use the checklist to track orders, scheduling, and arrival tasks.
+          Coming soon: box inventory tools and base overviews to simplify every
+          move.
+        </p>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="container">
         <p>
-          Tip: Your progress is saved automatically on this device using local
+          Tip: The PCS Checklist saves progress automatically using local
           storage.
         </p>
       </div>
     </footer>
-
-    <script src="script.js"></script>
   </body>
 </html>
