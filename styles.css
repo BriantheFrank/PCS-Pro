@@ -108,6 +108,87 @@ main {
   gap: 1.5rem;
 }
 
+/* Base tiles use a light, Material-adjacent treatment with subtle hover states. */
+.base-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.base-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  display: grid;
+  gap: 0.75rem;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.base-card:hover,
+.base-card:focus-visible {
+  border-color: var(--accent);
+  background-color: var(--accent-soft);
+  outline: none;
+}
+
+.base-card h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.base-state {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.base-label {
+  margin: 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.base-units {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.base-units li {
+  margin: 0;
+}
+
+.base-detail {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.base-detail h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.base-detail p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  color: var(--accent);
+  font-weight: 600;
+}
+
 .nav-card {
   background: var(--surface);
   border: 1px solid var(--border);
