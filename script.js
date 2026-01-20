@@ -31,3 +31,164 @@ checkboxes.forEach((checkbox) => {
     saveState(state);
   });
 });
+
+// Move inventory state management using localStorage.
+const INVENTORY_KEY = "pcs-move-inventory";
+
+const loadInventory = () => {
+  const stored = localStorage.getItem(INVENTORY_KEY);
+  if (!stored) {
+    return { rooms: [] };
+  }
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    console.warn("Unable to parse inventory state.", error);
+    return { rooms: [] };
+  }
+};
+
+const saveInventory = (inventory) => {
+  localStorage.setItem(INVENTORY_KEY, JSON.stringify(inventory));
+};
+
+// Inventory UI helpers are initialized only when the page includes the module elements.
+const inventorySearch = document.querySelector("#inventory-search");
+const roomForm = document.querySelector("#room-form");
+const roomNameInput = document.querySelector("#room-name");
+const roomsContainer = document.querySelector("#rooms-container");
+
+if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
+  let inventory = loadInventory();
+  let currentQuery = "";
+
+  const normalize = (value) => value.trim().toLowerCase();
+
+  // Build the room inventory card with collapsible content and inline add-item form.
+  const renderRoom = (room, roomIndex) => {
+    const filteredQuery = normalize(currentQuery);
+    const roomMatches = normalize(room.name).includes(filteredQuery);
+    const filteredItems = roomMatches
+      ? room.items
+      : room.items.filter((item) => {
+          const labelMatch = normalize(item.label).includes(filteredQuery);
+          const notesMatch = normalize(item.notes || "").includes(filteredQuery);
+          return labelMatch || notesMatch;
+        });
+
+    if (filteredQuery && !roomMatches && filteredItems.length === 0) {
+      return "";
+    }
+
+    const itemCount = room.items.length;
+    const itemsMarkup =
+      filteredItems.length === 0
+        ? `<p class="inventory-empty">No matching items yet.</p>`
+        : `<ul class="inventory-items">
+            ${filteredItems
+              .map(
+                (item) => `
+                  <li class="inventory-item">
+                    <strong>${item.label}</strong>
+                    ${
+                      item.notes
+                        ? `<p class="inventory-notes">${item.notes}</p>`
+                        : ""
+                    }
+                  </li>
+                `
+              )
+              .join("")}
+          </ul>`;
+
+    return `
+      <details class="inventory-room" ${filteredQuery ? "open" : ""}>
+        <summary>
+          <h3>${room.name}</h3>
+          <span class="inventory-room-meta">${itemCount} items</span>
+        </summary>
+        <form class="inventory-form" data-room-index="${roomIndex}">
+          <label for="item-label-${roomIndex}">Add a box or item</label>
+          <input
+            id="item-label-${roomIndex}"
+            name="item-label"
+            type="text"
+            placeholder="Box 1 – Dishes"
+            required
+          />
+          <label for="item-notes-${roomIndex}">Notes (optional)</label>
+          <textarea
+            id="item-notes-${roomIndex}"
+            name="item-notes"
+            placeholder="Fragile, open first, belongs upstairs"
+          ></textarea>
+          <button type="submit">Add Item</button>
+        </form>
+        ${itemsMarkup}
+      </details>
+    `;
+  };
+
+  // Render all rooms based on current search query and stored state.
+  const renderRooms = () => {
+    if (inventory.rooms.length === 0) {
+      roomsContainer.innerHTML = `
+        <section class="info-panel">
+          <h2>Start your room list</h2>
+          <p>
+            Add a room above to begin tracking boxes and household items for
+            your move.
+          </p>
+        </section>
+      `;
+      return;
+    }
+
+    roomsContainer.innerHTML = inventory.rooms
+      .map((room, index) => renderRoom(room, index))
+      .join("");
+  };
+
+  // Add a room to the inventory state.
+  roomForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const name = roomNameInput.value.trim();
+    if (!name) {
+      return;
+    }
+    inventory.rooms.push({ name, items: [] });
+    saveInventory(inventory);
+    roomNameInput.value = "";
+    renderRooms();
+  });
+
+  // Delegated handler to capture add-item submissions for any room.
+  roomsContainer.addEventListener("submit", (event) => {
+    const form = event.target.closest("form[data-room-index]");
+    if (!form) {
+      return;
+    }
+    event.preventDefault();
+    const roomIndex = Number(form.dataset.roomIndex);
+    const labelInput = form.querySelector("input[name='item-label']");
+    const notesInput = form.querySelector("textarea[name='item-notes']");
+    const label = labelInput.value.trim();
+    const notes = notesInput.value.trim();
+    if (!label || Number.isNaN(roomIndex)) {
+      return;
+    }
+    inventory.rooms[roomIndex].items.push({ label, notes });
+    saveInventory(inventory);
+    labelInput.value = "";
+    notesInput.value = "";
+    renderRooms();
+  });
+
+  // Live search filters rooms, items, and notes as the user types.
+  inventorySearch.addEventListener("input", (event) => {
+    currentQuery = event.target.value;
+    renderRooms();
+  });
+
+  renderRooms();
+}
