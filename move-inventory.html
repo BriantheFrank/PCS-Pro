@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Move Inventory</title>
+    <!--
+      Move inventory page for organizing rooms, boxes, and items.
+    -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <!--
+          Shared navigation keeps the site connected.
+        -->
+        <div class="top-bar">
+          <a class="brand" href="index.html">PCS Move Planner</a>
+          <nav class="site-nav">
+            <a href="pcs-checklist.html">PCS Checklist</a>
+            <a class="is-active" href="move-organizer.html">Move Organizer</a>
+            <a href="bases.html">Destination Bases</a>
+          </nav>
+        </div>
+        <p class="eyebrow">Move Organizer</p>
+        <h1>Move Inventory</h1>
+        <p class="subtitle">
+          Build a room-by-room inventory with boxes, item labels, and notes. Your
+          data stays on this device and works offline.
+        </p>
+      </div>
+    </header>
+
+    <main class="container inventory-grid">
+      <section class="inventory-controls">
+        <div class="inventory-search">
+          <label for="inventory-search">Search your inventory</label>
+          <input
+            id="inventory-search"
+            type="search"
+            placeholder="Search rooms, items, or notes"
+            autocomplete="off"
+          />
+        </div>
+
+        <form class="inventory-form" id="room-form">
+          <label for="room-name">Add a room</label>
+          <input
+            id="room-name"
+            name="room-name"
+            type="text"
+            placeholder="Kitchen, Garage, Bedroom"
+            required
+          />
+          <button type="submit">Add Room</button>
+        </form>
+      </section>
+
+      <section id="rooms-container">
+        <!--
+          Rooms and items render here based on localStorage state.
+        -->
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>
+          Tip: Add notes like “Fragile” or “Open first” to speed up unpacking.
+        </p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

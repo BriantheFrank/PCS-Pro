@@ -223,6 +223,19 @@ main {
   color: var(--accent);
 }
 
+/* Disabled tile styling for coming-soon cards. */
+.nav-card.is-disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.nav-card.is-disabled:hover,
+.nav-card.is-disabled:focus-visible {
+  border-color: var(--border);
+  box-shadow: none;
+  background: var(--surface);
+}
+
 .info-panel {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -303,6 +316,122 @@ main {
 
 .site-footer p {
   margin: 0;
+}
+
+/* Move inventory layout helpers. */
+.inventory-controls {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.inventory-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.inventory-search {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.inventory-search input,
+.inventory-form input,
+.inventory-form textarea {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.inventory-form textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.inventory-form button {
+  justify-self: start;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.inventory-form button:hover,
+.inventory-form button:focus-visible {
+  background: #2558c5;
+  outline: none;
+}
+
+.inventory-room {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+}
+
+.inventory-room summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.inventory-room summary::-webkit-details-marker {
+  display: none;
+}
+
+.inventory-room h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.inventory-room-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.inventory-items {
+  margin: 1rem 0 0;
+  padding-left: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.inventory-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+  display: grid;
+  gap: 0.25rem;
+  background: var(--bg);
+}
+
+.inventory-item strong {
+  font-weight: 600;
+}
+
+.inventory-notes {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.inventory-empty {
+  margin: 0;
+  color: var(--muted);
+  font-style: italic;
 }
 
 @media (max-width: 700px) {
