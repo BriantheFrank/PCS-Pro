@@ -57,12 +57,63 @@ const inventorySearch = document.querySelector("#inventory-search");
 const roomForm = document.querySelector("#room-form");
 const roomNameInput = document.querySelector("#room-name");
 const roomsContainer = document.querySelector("#rooms-container");
+const totalWeightDisplay = document.querySelector("#total-weight");
 
 if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   let inventory = loadInventory();
   let currentQuery = "";
 
   const normalize = (value) => value.trim().toLowerCase();
+
+  // Estimation model note:
+  // Professional moving estimators typically assign average weights to common
+  // box sizes (small ~25 lbs, medium ~35-40 lbs, large ~60 lbs, wardrobe ~75 lbs).
+  // This mirrors that guidance by mapping label keywords to those box weights
+  // and defaulting unknown items to a standard box average (40 lbs).
+  const WEIGHT_ESTIMATES = [
+    { keywords: ["wardrobe"], weight: 75 },
+    { keywords: ["large box", "large"], weight: 60 },
+    { keywords: ["medium box", "medium"], weight: 40 },
+    { keywords: ["small box", "small"], weight: 25 },
+    { keywords: ["book", "books"], weight: 45 },
+  ];
+
+  const DEFAULT_ITEM_WEIGHT = 40;
+
+  const estimateItemWeight = (label) => {
+    const normalizedLabel = normalize(label);
+    const match = WEIGHT_ESTIMATES.find(({ keywords }) =>
+      keywords.some((keyword) => normalizedLabel.includes(keyword))
+    );
+    return match ? match.weight : DEFAULT_ITEM_WEIGHT;
+  };
+
+  const coerceWeight = (weight, label) => {
+    const numericWeight = Number(weight);
+    if (Number.isFinite(numericWeight) && numericWeight > 0) {
+      return numericWeight;
+    }
+    return estimateItemWeight(label);
+  };
+
+  const recalculateWeights = () => {
+    let totalWeight = 0;
+    inventory.rooms.forEach((room) => {
+      let roomWeight = 0;
+      room.items.forEach((item) => {
+        item.weight = coerceWeight(item.weight, item.label);
+        roomWeight += item.weight;
+      });
+      room.roomWeight = Math.round(roomWeight);
+      totalWeight += room.roomWeight;
+    });
+    inventory.totalWeight = Math.round(totalWeight);
+  };
+
+  const syncInventoryState = () => {
+    recalculateWeights();
+    saveInventory(inventory);
+  };
 
   // Build the room inventory card with collapsible content and inline add-item form.
   const renderRoom = (room, roomIndex) => {
@@ -87,9 +138,22 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
         : `<ul class="inventory-items">
             ${filteredItems
               .map(
-                (item) => `
+                (item, itemIndex) => `
                   <li class="inventory-item">
-                    <strong>${item.label}</strong>
+                    <div class="inventory-item-header">
+                      <strong>${item.label}</strong>
+                      <label class="inventory-item-weight">
+                        Estimated weight (lbs)
+                        <input
+                          type="number"
+                          min="1"
+                          step="1"
+                          value="${item.weight}"
+                          data-room-index="${roomIndex}"
+                          data-item-index="${itemIndex}"
+                        />
+                      </label>
+                    </div>
                     ${
                       item.notes
                         ? `<p class="inventory-notes">${item.notes}</p>`
@@ -124,6 +188,9 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
           ></textarea>
           <button type="submit">Add Item</button>
         </form>
+        <p class="inventory-room-weight">
+          Estimated Weight for ${room.name}: ${room.roomWeight} lbs
+        </p>
         ${itemsMarkup}
       </details>
     `;
@@ -147,6 +214,10 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     roomsContainer.innerHTML = inventory.rooms
       .map((room, index) => renderRoom(room, index))
       .join("");
+
+    if (totalWeightDisplay) {
+      totalWeightDisplay.textContent = `${inventory.totalWeight} lbs`;
+    }
   };
 
   // Add a room to the inventory state.
@@ -157,7 +228,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       return;
     }
     inventory.rooms.push({ name, items: [] });
-    saveInventory(inventory);
+    syncInventoryState();
     roomNameInput.value = "";
     renderRooms();
   });
@@ -177,10 +248,33 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     if (!label || Number.isNaN(roomIndex)) {
       return;
     }
-    inventory.rooms[roomIndex].items.push({ label, notes });
-    saveInventory(inventory);
+    inventory.rooms[roomIndex].items.push({
+      label,
+      notes,
+      weight: estimateItemWeight(label),
+    });
+    syncInventoryState();
     labelInput.value = "";
     notesInput.value = "";
+    renderRooms();
+  });
+
+  roomsContainer.addEventListener("change", (event) => {
+    const weightInput = event.target.closest("input[data-room-index]");
+    if (!weightInput) {
+      return;
+    }
+    const roomIndex = Number(weightInput.dataset.roomIndex);
+    const itemIndex = Number(weightInput.dataset.itemIndex);
+    if (Number.isNaN(roomIndex) || Number.isNaN(itemIndex)) {
+      return;
+    }
+    const item = inventory.rooms[roomIndex]?.items[itemIndex];
+    if (!item) {
+      return;
+    }
+    item.weight = coerceWeight(weightInput.value, item.label);
+    syncInventoryState();
     renderRooms();
   });
 
@@ -190,5 +284,6 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     renderRooms();
   });
 
+  syncInventoryState();
   renderRooms();
 }
