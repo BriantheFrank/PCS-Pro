@@ -134,7 +134,8 @@ main {
   outline: none;
 }
 
-.base-card h2 {
+.base-card h2,
+.base-card h3 {
   margin: 0;
   font-size: 1.2rem;
 }
