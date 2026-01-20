@@ -605,6 +605,79 @@ main {
   gap: 0.75rem;
 }
 
+.inventory-item-menu {
+  position: relative;
+}
+
+.item-menu-trigger {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.1rem;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.item-menu-trigger:hover,
+.item-menu-trigger:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.item-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 10;
+  min-width: 200px;
+  padding: 0.35rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+  display: grid;
+  gap: 0.25rem;
+}
+
+.item-menu-item {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.9rem;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.item-menu-item:hover,
+.item-menu-item:focus-visible {
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.item-menu-item--danger {
+  color: #b42318;
+}
+
+.inventory-item-panel {
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.75rem;
+  background: var(--surface);
+}
+
+.inventory-item-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .inventory-item strong {
   font-weight: 600;
 }

@@ -168,6 +168,16 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
         }>${category.label}</option>`
     ).join("");
 
+  const buildRoomOptions = (selectedRoomIndex) =>
+    inventory.rooms
+      .map(
+        (room, index) =>
+          `<option value="${index}" ${
+            index === selectedRoomIndex ? "selected" : ""
+          }>${room.name}</option>`
+      )
+      .join("");
+
   const recalculateWeights = () => {
     let totalWeight = 0;
     inventory.rooms.forEach((room) => {
@@ -188,6 +198,46 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     recalculateWeights();
     // Persist checkbox state so inclusion choices survive page reloads.
     saveInventory(inventory);
+  };
+
+  const refreshActiveLabelPanel = () => {
+    if (!labelPanel || labelPanel.hidden) {
+      return;
+    }
+    const context = getActiveLabelContext();
+    if (!context) {
+      return;
+    }
+    const settings = ensureLabelSettings(context.room, context.item);
+    syncLabelInputs(settings);
+    applyLabelPreview(settings);
+  };
+
+  const closeItemMenus = () => {
+    roomsContainer.querySelectorAll(".item-menu-dropdown").forEach((menu) => {
+      menu.hidden = true;
+    });
+    roomsContainer.querySelectorAll(".item-menu-trigger").forEach((button) => {
+      button.setAttribute("aria-expanded", "false");
+    });
+  };
+
+  const closeItemPanels = () => {
+    roomsContainer.querySelectorAll(".inventory-item-panel").forEach((panel) => {
+      panel.hidden = true;
+    });
+  };
+
+  const adjustActiveLabelIndexOnRemoval = (roomIndex, itemIndex) => {
+    if (!activeLabelItem || activeLabelItem.roomIndex !== roomIndex) {
+      return;
+    }
+    if (activeLabelItem.itemIndex > itemIndex) {
+      activeLabelItem = {
+        roomIndex: activeLabelItem.roomIndex,
+        itemIndex: activeLabelItem.itemIndex - 1,
+      };
+    }
   };
 
   // Build the room inventory card with collapsible content and inline add-item form.
@@ -222,6 +272,51 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
                     <div class="inventory-item-main">
                       <div class="inventory-item-header">
                         <strong>${item.label}</strong>
+                        <div class="inventory-item-menu">
+                          <button
+                            type="button"
+                            class="item-menu-trigger"
+                            data-action="toggle-item-menu"
+                            data-room-index="${roomIndex}"
+                            data-item-index="${itemIndex}"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            aria-label="Item options"
+                          >
+                            ⋮
+                          </button>
+                          <div class="item-menu-dropdown" role="menu" hidden>
+                            <button
+                              type="button"
+                              class="item-menu-item"
+                              data-action="open-panel"
+                              data-panel="move"
+                              data-room-index="${roomIndex}"
+                              data-item-index="${itemIndex}"
+                            >
+                              Move to Another Room
+                            </button>
+                            <button
+                              type="button"
+                              class="item-menu-item"
+                              data-action="open-panel"
+                              data-panel="rename"
+                              data-room-index="${roomIndex}"
+                              data-item-index="${itemIndex}"
+                            >
+                              Rename Item
+                            </button>
+                            <button
+                              type="button"
+                              class="item-menu-item item-menu-item--danger"
+                              data-action="delete-item"
+                              data-room-index="${roomIndex}"
+                              data-item-index="${itemIndex}"
+                            >
+                              Delete Item
+                            </button>
+                          </div>
+                        </div>
                       </div>
                       <div class="inventory-item-fields">
                         <label class="inventory-item-field">
@@ -262,6 +357,78 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
                           ? `<p class="inventory-notes">${item.notes}</p>`
                           : ""
                       }
+                      <div
+                        class="inventory-item-panel"
+                        data-panel="move"
+                        hidden
+                      >
+                        <label class="inventory-item-field">
+                          Move to room
+                          <select
+                            data-move-select
+                            data-room-index="${roomIndex}"
+                            data-item-index="${itemIndex}"
+                          >
+                            ${buildRoomOptions(roomIndex)}
+                          </select>
+                        </label>
+                        <div class="inventory-item-panel-actions">
+                          <button
+                            type="button"
+                            class="label-action secondary"
+                            data-action="cancel-panel"
+                            data-room-index="${roomIndex}"
+                            data-item-index="${itemIndex}"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            class="label-action"
+                            data-action="confirm-move"
+                            data-room-index="${roomIndex}"
+                            data-item-index="${itemIndex}"
+                          >
+                            Move Item
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        class="inventory-item-panel"
+                        data-panel="rename"
+                        hidden
+                      >
+                        <label class="inventory-item-field">
+                          New item name
+                          <input
+                            type="text"
+                            value="${item.label}"
+                            data-rename-input
+                            data-room-index="${roomIndex}"
+                            data-item-index="${itemIndex}"
+                          />
+                        </label>
+                        <div class="inventory-item-panel-actions">
+                          <button
+                            type="button"
+                            class="label-action secondary"
+                            data-action="cancel-panel"
+                            data-room-index="${roomIndex}"
+                            data-item-index="${itemIndex}"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            class="label-action"
+                            data-action="confirm-rename"
+                            data-room-index="${roomIndex}"
+                            data-item-index="${itemIndex}"
+                          >
+                            Save Name
+                          </button>
+                        </div>
+                      </div>
                       <div class="inventory-item-footer">
                         <div class="inventory-item-actions">
                           <button
@@ -696,8 +863,16 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     });
   }
 
+  // Close item action menus when clicking elsewhere on the page.
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".inventory-item-menu")) {
+      closeItemMenus();
+    }
+  });
+
+  // Item-level action menu handlers (move, rename, delete, label shortcuts).
   roomsContainer.addEventListener("click", (event) => {
-    const actionButton = event.target.closest("button[data-action]");
+    const actionButton = event.target.closest("[data-action]");
     if (!actionButton) {
       return;
     }
@@ -708,10 +883,132 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     if (!room || !item) {
       return;
     }
-    if (actionButton.dataset.action === "view-label") {
-      openLabelPanel(roomIndex, itemIndex);
+    const action = actionButton.dataset.action;
+    if (action === "toggle-item-menu") {
+      const menuWrapper = actionButton.closest(".inventory-item-menu");
+      const menu = menuWrapper?.querySelector(".item-menu-dropdown");
+      if (!menu || !menuWrapper) {
+        return;
+      }
+      const shouldOpen = menu.hidden;
+      closeItemMenus();
+      if (shouldOpen) {
+        menu.hidden = false;
+        actionButton.setAttribute("aria-expanded", "true");
+      }
+      return;
     }
-    if (actionButton.dataset.action === "print-label") {
+    if (action === "open-panel") {
+      const panelName = actionButton.dataset.panel;
+      const itemCard = actionButton.closest(".inventory-item");
+      closeItemMenus();
+      closeItemPanels();
+      const panel = itemCard?.querySelector(
+        `.inventory-item-panel[data-panel="${panelName}"]`
+      );
+      if (panel) {
+        panel.hidden = false;
+        const focusTarget = panel.querySelector("input, select");
+        focusTarget?.focus();
+      }
+      return;
+    }
+    if (action === "cancel-panel") {
+      const panel = actionButton.closest(".inventory-item-panel");
+      if (panel) {
+        panel.hidden = true;
+      }
+      return;
+    }
+    if (action === "confirm-move") {
+      const itemCard = actionButton.closest(".inventory-item");
+      const select = itemCard?.querySelector("[data-move-select]");
+      const destinationIndex = Number(select?.value);
+      if (Number.isNaN(destinationIndex)) {
+        return;
+      }
+      if (destinationIndex === roomIndex) {
+        closeItemPanels();
+        return;
+      }
+      const oldRoomName = room.name;
+      const [movedItem] = room.items.splice(itemIndex, 1);
+      if (!movedItem) {
+        return;
+      }
+      const wasActive =
+        activeLabelItem &&
+        activeLabelItem.roomIndex === roomIndex &&
+        activeLabelItem.itemIndex === itemIndex;
+      if (!wasActive) {
+        adjustActiveLabelIndexOnRemoval(roomIndex, itemIndex);
+      }
+      const destinationRoom = inventory.rooms[destinationIndex];
+      destinationRoom.items.push(movedItem);
+      if (movedItem.labelSettings && movedItem.labelSettings.room === oldRoomName) {
+        movedItem.labelSettings.room = destinationRoom.name;
+      }
+      if (wasActive) {
+        activeLabelItem = {
+          roomIndex: destinationIndex,
+          itemIndex: destinationRoom.items.length - 1,
+        };
+      }
+      syncInventoryState();
+      renderRooms();
+      refreshActiveLabelPanel();
+      return;
+    }
+    if (action === "confirm-rename") {
+      const itemCard = actionButton.closest(".inventory-item");
+      const input = itemCard?.querySelector("[data-rename-input]");
+      const newLabel = input?.value.trim();
+      if (!newLabel) {
+        return;
+      }
+      const oldLabel = item.label;
+      item.label = newLabel;
+      if (
+        item.labelSettings &&
+        (!item.labelSettings.title || item.labelSettings.title === oldLabel)
+      ) {
+        item.labelSettings.title = newLabel;
+      }
+      syncInventoryState();
+      renderRooms();
+      refreshActiveLabelPanel();
+      return;
+    }
+    if (action === "delete-item") {
+      const confirmed = window.confirm(
+        "Are you sure you want to delete this item? This cannot be undone."
+      );
+      if (!confirmed) {
+        return;
+      }
+      const wasActive =
+        activeLabelItem &&
+        activeLabelItem.roomIndex === roomIndex &&
+        activeLabelItem.itemIndex === itemIndex;
+      room.items.splice(itemIndex, 1);
+      if (wasActive) {
+        if (labelPanel) {
+          labelPanel.hidden = true;
+        }
+        activeLabelItem = null;
+      } else {
+        adjustActiveLabelIndexOnRemoval(roomIndex, itemIndex);
+      }
+      syncInventoryState();
+      renderRooms();
+      refreshActiveLabelPanel();
+      return;
+    }
+    if (action === "view-label") {
+      openLabelPanel(roomIndex, itemIndex);
+      return;
+    }
+    if (action === "print-label") {
       openLabelPanel(roomIndex, itemIndex);
       setTimeout(() => window.print(), 50);
     }
