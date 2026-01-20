@@ -247,6 +247,43 @@ main {
   margin-top: 0;
 }
 
+/* Recommended order section for first-time users. */
+.recommended-order {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.recommended-order h2 {
+  margin-top: 0;
+}
+
+.recommended-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.recommended-list p {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.text-link {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.text-link:hover,
+.text-link:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
 .checklist-section {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -316,6 +353,13 @@ main {
 
 .site-footer p {
   margin: 0;
+}
+
+.footer-disclaimer {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
 }
 
 /* Move inventory layout helpers. */
