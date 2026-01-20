@@ -34,6 +34,17 @@
 
     <main class="container inventory-grid">
       <section class="inventory-controls">
+        <div class="inventory-scan">
+          <h2>Scan box QR code</h2>
+          <p>
+            Use your phone or laptop camera to pull up the details for a
+            labeled box.
+          </p>
+          <button type="button" class="scan-button" id="scan-qr-button">
+            Scan Box QR Code
+          </button>
+        </div>
+
         <div class="inventory-search">
           <label for="inventory-search">Search your inventory</label>
           <input
@@ -70,7 +81,60 @@
           Rooms and items render here based on localStorage state.
         -->
       </section>
+
+      <section class="label-panel" id="label-panel" hidden>
+        <div class="label-panel-header">
+          <div>
+            <p class="label-eyebrow">Box label preview</p>
+            <h2>Printable Label</h2>
+          </div>
+          <div class="label-panel-actions">
+            <button type="button" class="label-action" id="print-label-button">
+              Print Label
+            </button>
+            <button type="button" class="label-action secondary" id="close-label-button">
+              Close
+            </button>
+          </div>
+        </div>
+        <div class="print-label" id="print-label">
+          <div class="print-label-header">
+            <div>
+              <p class="label-title" id="label-title">Box Label</p>
+              <p class="label-room" id="label-room">Room</p>
+              <p class="label-weight" id="label-weight">Weight</p>
+            </div>
+            <div class="label-qr" id="label-qr"></div>
+          </div>
+          <div class="label-details">
+            <p class="label-notes" id="label-notes"></p>
+            <p class="label-id">
+              Box ID: <span id="label-id"></span>
+            </p>
+          </div>
+        </div>
+      </section>
     </main>
+
+    <div class="scanner-modal" id="scanner-modal" hidden>
+      <div class="scanner-backdrop" data-action="close-scanner"></div>
+      <div class="scanner-card" role="dialog" aria-modal="true" aria-labelledby="scanner-title">
+        <div class="scanner-header">
+          <h2 id="scanner-title">Scan box QR code</h2>
+          <button type="button" class="label-action secondary" id="close-scanner-button">
+            Close
+          </button>
+        </div>
+        <p class="scanner-status" id="scanner-status">
+          Point your camera at a box label to scan.
+        </p>
+        <div class="scanner-video">
+          <video id="scanner-video" playsinline></video>
+          <canvas id="scanner-canvas" aria-hidden="true"></canvas>
+        </div>
+        <div class="scanner-result" id="scanner-result"></div>
+      </div>
+    </div>
 
     <footer class="site-footer">
       <div class="container">
@@ -80,6 +144,8 @@
       </div>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
