@@ -293,12 +293,110 @@ main {
   gap: 1.25rem;
 }
 
+.checklist-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 280px);
+  gap: 2rem;
+  align-items: start;
+}
+
+.checklist-main {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.checklist-sidebar {
+  position: sticky;
+  top: 1.5rem;
+}
+
+.sidebar-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.sidebar-card h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.sidebar-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.65rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.disclaimer-banner {
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.checklist-section summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.checklist-section summary::-webkit-details-marker {
+  display: none;
+}
+
+.checklist-section summary::after {
+  content: "+";
+  font-size: 1.5rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.checklist-section[open] summary::after {
+  content: "–";
+}
+
+.checklist-section summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
 .checklist-section h2 {
   margin: 0;
   font-size: 1.25rem;
   color: var(--text);
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 0.5rem;
+}
+
+.checklist-section-body {
+  display: grid;
+  gap: 1.25rem;
+  padding-top: 1rem;
+}
+
+.checklist-subsection {
+  display: grid;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.checklist-subsection h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text);
 }
 
 .checklist-item {
@@ -779,6 +877,14 @@ main {
 
   .label-panel-body {
     grid-template-columns: 1fr;
+  }
+
+  .checklist-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .checklist-sidebar {
+    position: static;
   }
 
   .checklist-section {

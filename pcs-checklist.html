@@ -33,212 +33,621 @@
     </header>
 
     <main class="container">
-      <!--
-        Each section groups related PCS milestones.
-        Checkboxes are wired up by script.js and persisted via localStorage.
-      -->
-      <section class="checklist-section" data-section="orders">
-        <h2>Orders Received</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="orders-review" />
-            <span class="item-title">Review your PCS orders carefully</span>
-          </label>
-          <p class="item-help">
-            Confirm report dates, gaining unit, and any special instructions so
-            you can plan timelines correctly.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="orders-deros" />
-            <span class="item-title">Verify DEROS or report date changes</span>
-          </label>
-          <p class="item-help">
-            Ask your chain of command if your date shifted or requires official
-            amendments.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="orders-family" />
-            <span class="item-title">Notify family and key contacts</span>
-          </label>
-          <p class="item-help">
-            Share the move timeline with spouses, caregivers, and anyone helping
-            with dependents.
-          </p>
-        </div>
-      </section>
+      <div class="disclaimer-banner">
+        <strong>Disclaimer:</strong> This checklist is not official DoD guidance.
+        Policies, rates, and procedures change annually. Always verify details
+        with your TMO, finance office, and chain of command.
+      </div>
 
-      <section class="checklist-section" data-section="planning">
-        <h2>Pre-Move Planning</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="planning-budget" />
-            <span class="item-title">Estimate your move budget</span>
-          </label>
-          <p class="item-help">
-            Track expected travel costs, temporary lodging, and out-of-pocket
-            expenses to reduce surprises.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="planning-housing" />
-            <span class="item-title">Research housing at the new duty station</span>
-          </label>
-          <p class="item-help">
-            Compare on-post and off-post options, waitlists, and neighborhood
-            commute times.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="planning-records" />
-            <span class="item-title">Collect medical, school, and pet records</span>
-          </label>
-          <p class="item-help">
-            Store copies of vaccinations, school transcripts, and vet
-            documentation for easy check-in.
-          </p>
-        </div>
-      </section>
+      <div class="checklist-layout">
+        <div class="checklist-main">
+          <!-- New section: Receiving PCS Orders -->
+          <details class="checklist-section" data-section="orders" open>
+            <summary>
+              <h2>Receiving PCS Orders</h2>
+            </summary>
+            <div class="checklist-section-body">
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="orders-receipt" />
+                  <span class="item-title">
+                    Log receipt of PCS orders (DA Form 1610 or branch equivalent)
+                  </span>
+                </label>
+                <p class="item-help">
+                  Verify your orders match the assignment notification and store
+                  copies in your PCS binder.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="orders-levy-brief" />
+                  <span class="item-title">
+                    Complete the mandatory levy brief / relocation counseling
+                  </span>
+                </label>
+                <p class="item-help">
+                  Schedule the MPD or S1/G1 briefing early to unlock move
+                  scheduling in DPS and finance systems.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="orders-review" />
+                  <span class="item-title">
+                    Review RFO details, RNLT dates, TDY, and dependent travel
+                    authorizations
+                  </span>
+                </label>
+                <p class="item-help">
+                  Confirm report timelines, en route TDY, and dependent travel
+                  entitlements before locking in leave and travel plans.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="orders-amendments" />
+                  <span class="item-title">
+                    Request amendments for special entitlements or OCONUS
+                    requirements
+                  </span>
+                </label>
+                <p class="item-help">
+                  Address passports, command sponsorship, unaccompanied tours, or
+                  EFMP needs before transportation is scheduled.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="orders-para" />
+                  <span class="item-title">Update ORB/ERB and personnel data</span>
+                </label>
+                <p class="item-help">
+                  Ensure personal data, dependents, and clearance information are
+                  current to prevent delays.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="orders-finance-advance" />
+                  <span class="item-title">
+                    Notify finance about advance pay and travel options
+                  </span>
+                </label>
+                <p class="item-help">
+                  Ask about advance pay, GTCC use, and any required counseling for
+                  DLA or TLE.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="orders-efmp" />
+                  <span class="item-title">
+                    Initiate EFMP screening early to avoid assignment holds
+                  </span>
+                </label>
+                <p class="item-help">
+                  Start medical and educational screenings right away if family
+                  members are enrolled.
+                </p>
+              </div>
+            </div>
+          </details>
 
-      <section class="checklist-section" data-section="scheduling">
-        <h2>Scheduling Movers</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="scheduling-ppms" />
-            <span class="item-title">Decide between HHG shipment or PPM</span>
-          </label>
-          <p class="item-help">
-            Choose a government-arranged move or personally procured move and
-            document the decision.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="scheduling-dates" />
-            <span class="item-title">Schedule pack-out and pickup dates</span>
-          </label>
-          <p class="item-help">
-            Coordinate with the transportation office to lock in packing and
-            pickup windows.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="scheduling-weight" />
-            <span class="item-title">Confirm your weight allowance</span>
-          </label>
-          <p class="item-help">
-            Verify authorized weight limits to avoid excess weight charges and
-            plan accordingly.
-          </p>
-        </div>
-      </section>
+          <details class="checklist-section" data-section="planning">
+            <summary>
+              <h2>Pre-Move Planning</h2>
+            </summary>
+            <div class="checklist-section-body">
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="planning-entitlements" />
+                  <span class="item-title">
+                    Build a PCS entitlement estimate under the JTR
+                  </span>
+                </label>
+                <p class="item-help">
+                  Include MALT/mileage (roughly $0.22 per mile, changes annually),
+                  per diem (M&amp;IE varies by location), DLA by rank/dependents,
+                  and TLE eligibility.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="planning-tools" />
+                  <span class="item-title">
+                    Use official tools to estimate reimbursements
+                  </span>
+                </label>
+                <p class="item-help">
+                  Compare estimates in DTS, DFAS, or Move.mil tools, and flag
+                  gaps early with your transportation or finance office.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="planning-track-costs" />
+                  <span class="item-title">
+                    Track tolls, ferry fees, and authorized pet transport costs
+                  </span>
+                </label>
+                <p class="item-help">
+                  Keep receipts in a PCS binder or digital folder to avoid
+                  under-claiming later.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="planning-binder" />
+                  <span class="item-title">
+                    Maintain a PCS binder or digital record hub
+                  </span>
+                </label>
+                <p class="item-help">
+                  Store orders, amendments, receipts, weight tickets, and contact
+                  rosters in one place.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="planning-housing" />
+                  <span class="item-title">Research housing at the new duty station</span>
+                </label>
+                <p class="item-help">
+                  Compare on-post and off-post options, waitlists, and neighborhood
+                  commute times.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="planning-records" />
+                  <span class="item-title">Collect medical, school, and pet records</span>
+                </label>
+                <p class="item-help">
+                  Store copies of vaccinations, school transcripts, and vet
+                  documentation for easy check-in.
+                </p>
+              </div>
+              <p class="item-help">
+                Pro tip: Consider adding an interactive entitlement calculator or
+                official links to make estimates easier for families.
+              </p>
+            </div>
+          </details>
 
-      <section class="checklist-section" data-section="packing">
-        <h2>Packing Period</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="packing-essentials" />
-            <span class="item-title">Set aside an essentials bag</span>
-          </label>
-          <p class="item-help">
-            Keep uniforms, documents, medications, and chargers with you for the
-            travel days.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="packing-photos" />
-            <span class="item-title">Take photos of high-value items</span>
-          </label>
-          <p class="item-help">
-            Document electronics, furniture, and serial numbers to support any
-            damage claims.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="packing-inventory" />
-            <span class="item-title">Review the inventory with movers</span>
-          </label>
-          <p class="item-help">
-            Verify each box and item count to ensure accuracy before the truck
-            departs.
-          </p>
-        </div>
-      </section>
+          <details class="checklist-section" data-section="scheduling">
+            <summary>
+              <h2>Scheduling Movers</h2>
+            </summary>
+            <div class="checklist-section-body">
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="scheduling-move-type" />
+                  <span class="item-title">
+                    Choose a move type: HHG via TMO, PPM (DITY), or a combination
+                  </span>
+                </label>
+                <p class="item-help">
+                  Understand what the government arranges versus what you will
+                  self-procure for each portion of the move.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="scheduling-ppms" />
+                  <span class="item-title">
+                    Complete PPM counseling and secure pre-approval
+                  </span>
+                </label>
+                <p class="item-help">
+                  Reimbursement can be up to 100% of government cost, but requires
+                  counseling, weight tickets, and tax withholding awareness.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="scheduling-weight" />
+                  <span class="item-title">Confirm your weight allowance</span>
+                </label>
+                <p class="item-help">
+                  Verify authorized weight limits by grade and dependent status,
+                  including storage in transit or NTS if needed.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="scheduling-dates" />
+                  <span class="item-title">Schedule DPS pre-move surveys and dates</span>
+                </label>
+                <p class="item-help">
+                  Coordinate DPS surveys, pack-out, and pickup windows with your
+                  transportation office.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="scheduling-sipcr" />
+                  <span class="item-title">Document high-value items (SIPCR)</span>
+                </label>
+                <p class="item-help">
+                  Create a high-value inventory with serial numbers and photos to
+                  protect valuable items.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="scheduling-hazmat" />
+                  <span class="item-title">Review HAZMAT and prohibited items</span>
+                </label>
+                <p class="item-help">
+                  Separate aerosols, propane, lithium batteries, and other
+                  restricted items before pack-out.
+                </p>
+              </div>
+            </div>
+          </details>
 
-      <section class="checklist-section" data-section="clearing">
-        <h2>Clearing the Installation</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="clearing-appointments" />
-            <span class="item-title">Schedule final out-processing appointments</span>
-          </label>
-          <p class="item-help">
-            Book finance, medical, and housing appointments early so you can
-            finish all signatures.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="clearing-turnins" />
-            <span class="item-title">Turn in gear and clear your unit</span>
-          </label>
-          <p class="item-help">
-            Return issued equipment, receive clearance stamps, and keep copies
-            of all paperwork.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="clearing-travel" />
-            <span class="item-title">Confirm travel plans and receipts</span>
-          </label>
-          <p class="item-help">
-            Finalize flights, lodging, or POV route plans and save receipts for
-            travel vouchers.
-          </p>
-        </div>
-      </section>
+          <details class="checklist-section" data-section="packing">
+            <summary>
+              <h2>Packing Period</h2>
+            </summary>
+            <div class="checklist-section-body">
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="packing-essentials" />
+                  <span class="item-title">Set aside an essentials bag</span>
+                </label>
+                <p class="item-help">
+                  Keep uniforms, documents, medications, and chargers with you for the
+                  travel days.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="packing-progear" />
+                  <span class="item-title">
+                    Separate PBP&amp;E (pro-gear) for separate weighing
+                  </span>
+                </label>
+                <p class="item-help">
+                  Ensure professional books and equipment are inventoried and
+                  weighed separately to protect your weight allowance.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="packing-inventory" />
+                  <span class="item-title">Maintain inventory copies for vouchers</span>
+                </label>
+                <p class="item-help">
+                  Keep inventory lists and weight tickets ready for voucher
+                  submission and claims.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="packing-cif" />
+                  <span class="item-title">Label CIF/OCIE gear separately</span>
+                </label>
+                <p class="item-help">
+                  Segregate issued gear to make turn-in or inspection easier at
+                  clearing.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="packing-pet-docs" />
+                  <span class="item-title">Pack pet documentation and health certificates</span>
+                </label>
+                <p class="item-help">
+                  Keep vaccination records and airline paperwork in your hand-carry
+                  kit.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="packing-photos" />
+                  <span class="item-title">Photograph pre-existing damage</span>
+                </label>
+                <p class="item-help">
+                  Capture photos and serial numbers to support DPS loss or damage
+                  claims.
+                </p>
+              </div>
+              <p class="item-help">
+                Optional: Download branch-specific packing checklists to help
+                families stay aligned.
+              </p>
+            </div>
+          </details>
 
-      <section class="checklist-section" data-section="arrival">
-        <h2>Arrival and Delivery</h2>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="arrival-checkin" />
-            <span class="item-title">Check in with your new unit</span>
-          </label>
-          <p class="item-help">
-            Report to your gaining command and confirm in-processing schedules
-            as soon as you arrive.
-          </p>
+          <!-- New section: Executing the PCS Move and Travel -->
+          <details class="checklist-section" data-section="executing">
+            <summary>
+              <h2>Executing the PCS Move and Travel</h2>
+            </summary>
+            <div class="checklist-section-body">
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="executing-pov" />
+                  <span class="item-title">Plan POV travel days and rest stops</span>
+                </label>
+                <p class="item-help">
+                  The standard timeline is 1 travel day per 350 miles; build in
+                  safe rest and overnight stops.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="executing-dts" />
+                  <span class="item-title">Coordinate DTS or TDY en route details</span>
+                </label>
+                <p class="item-help">
+                  If you have TDY en route, ensure DTS reservations, orders, and
+                  leave forms match your travel plan.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="executing-oconus" />
+                  <span class="item-title">Confirm OCONUS requirements</span>
+                </label>
+                <p class="item-help">
+                  Verify passports, SOFA stamps, immunizations, and customs
+                  clearance timelines for overseas moves.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="executing-pets" />
+                  <span class="item-title">Plan for pet quarantine and transport rules</span>
+                </label>
+                <p class="item-help">
+                  Review quarantine requirements (HI, Guam) and airline embargo
+                  windows early.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="executing-family" />
+                  <span class="item-title">Transfer child care and school records</span>
+                </label>
+                <p class="item-help">
+                  Coordinate CYS transfers, school enrollment, and EFMP travel
+                  needs for dependents.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="executing-mail" />
+                  <span class="item-title">Submit USPS change-of-address and prep emergency kits</span>
+                </label>
+                <p class="item-help">
+                  Submit mail forwarding, build an emergency kit, and keep snacks
+                  and documents accessible during travel.
+                </p>
+              </div>
+            </div>
+          </details>
+
+          <details class="checklist-section" data-section="clearing">
+            <summary>
+              <h2>Clearing the Installation</h2>
+            </summary>
+            <div class="checklist-section-body">
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="clearing-forms" />
+                  <span class="item-title">Initiate the installation clearing packet</span>
+                </label>
+                <p class="item-help">
+                  Start DA Form 137-2 (or branch equivalent) and gather the
+                  required unit stamps.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="clearing-finance" />
+                  <span class="item-title">Complete finance out-processing</span>
+                </label>
+                <p class="item-help">
+                  Schedule final pay audits, travel advances, and counseling for
+                  DLA, TLE, or debt recoupment.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="clearing-medical" />
+                  <span class="item-title">Finalize medical and dental records transfer</span>
+                </label>
+                <p class="item-help">
+                  Update TRICARE region information and request records for
+                  dependents.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="clearing-housing" />
+                  <span class="item-title">Close out housing and utilities</span>
+                </label>
+                <p class="item-help">
+                  Provide lease termination notice, schedule inspections, and
+                  collect final housing clearance paperwork.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="clearing-cif" />
+                  <span class="item-title">Turn in CIF/OCIE and unit equipment</span>
+                </label>
+                <p class="item-help">
+                  Clear TA-50 or other gear, and keep turn-in receipts for your
+                  records.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="clearing-sfltap" />
+                  <span class="item-title">Attend SFL-TAP if within 365 days of separation</span>
+                </label>
+                <p class="item-help">
+                  Ensure TAP requirements are documented if you are nearing ETS
+                  or retirement timelines.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="clearing-deers" />
+                  <span class="item-title">Update DEERS / RAPIDS records</span>
+                </label>
+                <p class="item-help">
+                  Confirm dependent IDs, enrollments, and benefits remain active
+                  for the new duty station.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="clearing-vehicle" />
+                  <span class="item-title">Schedule POV inspections for shipment</span>
+                </label>
+                <p class="item-help">
+                  Complete VIN inspections, lienholder letters, and vehicle
+                  cleanliness requirements for shipping.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="clearing-mwr" />
+                  <span class="item-title">Return MWR rentals and loaner equipment</span>
+                </label>
+                <p class="item-help">
+                  Clear rental gear, sports equipment, or lodging loans to avoid
+                  fees.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="clearing-receipts" />
+                  <span class="item-title">Retain all receipts for vouchers</span>
+                </label>
+                <p class="item-help">
+                  Save receipts for lodging, fuel, tolls, pet transport, and
+                  storage to support claims.
+                </p>
+              </div>
+            </div>
+          </details>
+
+          <details class="checklist-section" data-section="arrival">
+            <summary>
+              <h2>Arrival and Delivery</h2>
+            </summary>
+            <div class="checklist-section-body">
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="arrival-checkin" />
+                  <span class="item-title">Check in with your new unit</span>
+                </label>
+                <p class="item-help">
+                  Report to your gaining command and confirm in-processing
+                  schedules as soon as you arrive.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="arrival-delivery" />
+                  <span class="item-title">Schedule household goods delivery</span>
+                </label>
+                <p class="item-help">
+                  Coordinate delivery dates and be present to inspect items at
+                  arrival.
+                </p>
+              </div>
+              <div class="checklist-item">
+                <label>
+                  <input type="checkbox" data-id="arrival-claims" />
+                  <span class="item-title">File any loss or damage claims</span>
+                </label>
+                <p class="item-help">
+                  Submit claims quickly using your move portal with photos and
+                  inventory notes.
+                </p>
+              </div>
+
+              <div class="checklist-subsection">
+                <h3>Filing Your Travel Voucher</h3>
+                <div class="checklist-item">
+                  <label>
+                    <input type="checkbox" data-id="voucher-1351" />
+                    <span class="item-title">
+                      File DD Form 1351-2 within 5 duty days
+                    </span>
+                  </label>
+                  <p class="item-help">
+                    Submit your travel voucher soon after arrival to avoid
+                    pay delays and missed entitlements.
+                  </p>
+                </div>
+                <div class="checklist-item">
+                  <label>
+                    <input type="checkbox" data-id="voucher-smart" />
+                    <span class="item-title">Use DFAS SmartVoucher or DTS</span>
+                  </label>
+                  <p class="item-help">
+                    Attach orders, amendments, and travel documents in the
+                    system your finance office requires.
+                  </p>
+                </div>
+                <div class="checklist-item">
+                  <label>
+                    <input type="checkbox" data-id="voucher-receipts" />
+                    <span class="item-title">Upload required receipts</span>
+                  </label>
+                  <p class="item-help">
+                    Include lodging, TLE, airfare, mileage logs, and weight
+                    tickets to support reimbursements.
+                  </p>
+                </div>
+                <div class="checklist-item">
+                  <label>
+                    <input type="checkbox" data-id="voucher-estimate" />
+                    <span class="item-title">Estimate payout and reconcile advances</span>
+                  </label>
+                  <p class="item-help">
+                    Verify deductions for travel advances or GTCC charges before
+                    final payout.
+                  </p>
+                </div>
+                <div class="checklist-item">
+                  <label>
+                    <input type="checkbox" data-id="voucher-extras" />
+                    <span class="item-title">Claim eligible extras and follow up</span>
+                  </label>
+                  <p class="item-help">
+                    Include pet travel claims, multiple POV mileage, laundry
+                    during delays, and follow up with finance as needed.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </details>
         </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="arrival-delivery" />
-            <span class="item-title">Schedule household goods delivery</span>
-          </label>
-          <p class="item-help">
-            Coordinate delivery dates and be present to inspect items at arrival.
-          </p>
-        </div>
-        <div class="checklist-item">
-          <label>
-            <input type="checkbox" data-id="arrival-claims" />
-            <span class="item-title">File any loss or damage claims</span>
-          </label>
-          <p class="item-help">
-            Submit claims quickly using your move portal with photos and
-            inventory notes.
-          </p>
-        </div>
-      </section>
+
+        <aside class="checklist-sidebar">
+          <div class="sidebar-card">
+            <h2>PCS Pitfalls and Pro Tips</h2>
+            <ul class="sidebar-list">
+              <li>Verify TRICARE region changes and re-enroll if required.</li>
+              <li>Start EFMP screening early to avoid assignment holds.</li>
+              <li>Prepare school impact aid forms and enrollment packets.</li>
+              <li>Schedule JAG updates for wills, POAs, and family care plans.</li>
+              <li>Review LES and TSP allocations after major pay changes.</li>
+              <li>Keep PPM weight tickets and fuel logs for audit readiness.</li>
+              <li>Store copies of orders and amendments in cloud storage.</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
     </main>
 
     <footer class="site-footer">
@@ -248,8 +657,9 @@
           storage.
         </p>
         <p class="footer-disclaimer">
-          This tool is for planning purposes only and does not replace official
-          guidance from your transportation, housing, or command channels.
+          This checklist is not official DoD guidance. Policies, rates, and
+          procedures change annually. Always verify details with your TMO,
+          finance office, and chain of command.
         </p>
       </div>
     </footer>
