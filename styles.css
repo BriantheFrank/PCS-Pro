@@ -466,6 +466,10 @@ main {
   font-weight: 600;
 }
 
+.inventory-item--excluded strong {
+  color: var(--muted);
+}
+
 .inventory-item-weight {
   display: grid;
   gap: 0.2rem;

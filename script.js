@@ -126,7 +126,12 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       let roomWeight = 0;
       room.items.forEach((item) => {
         item.weight = coerceWeight(item.weight, item.label);
-        roomWeight += item.weight;
+        if (typeof item.includeInEstimate !== "boolean") {
+          item.includeInEstimate = true;
+        }
+        if (item.includeInEstimate) {
+          roomWeight += item.weight;
+        }
       });
       room.roomWeight = Math.round(roomWeight);
       totalWeight += room.roomWeight;
@@ -137,6 +142,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   const syncInventoryState = () => {
     ensureInventoryIdentifiers();
     recalculateWeights();
+    // Persist checkbox state so inclusion choices survive page reloads.
     saveInventory(inventory);
   };
 
@@ -339,12 +345,12 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   });
 
   roomsContainer.addEventListener("change", (event) => {
-    const weightInput = event.target.closest("input[data-room-index]");
-    if (!weightInput) {
+    const target = event.target.closest("input[data-field]");
+    if (!target) {
       return;
     }
-    const roomIndex = Number(weightInput.dataset.roomIndex);
-    const itemIndex = Number(weightInput.dataset.itemIndex);
+    const roomIndex = Number(target.dataset.roomIndex);
+    const itemIndex = Number(target.dataset.itemIndex);
     if (Number.isNaN(roomIndex) || Number.isNaN(itemIndex)) {
       return;
     }
@@ -352,7 +358,12 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     if (!item) {
       return;
     }
-    item.weight = coerceWeight(weightInput.value, item.label);
+    if (target.dataset.field === "weight") {
+      item.weight = coerceWeight(target.value, item.label);
+    }
+    if (target.dataset.field === "include") {
+      item.includeInEstimate = target.checked;
+    }
     syncInventoryState();
     renderRooms();
   });
