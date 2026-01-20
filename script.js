@@ -102,7 +102,12 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       let roomWeight = 0;
       room.items.forEach((item) => {
         item.weight = coerceWeight(item.weight, item.label);
-        roomWeight += item.weight;
+        if (typeof item.includeInEstimate !== "boolean") {
+          item.includeInEstimate = true;
+        }
+        if (item.includeInEstimate) {
+          roomWeight += item.weight;
+        }
       });
       room.roomWeight = Math.round(roomWeight);
       totalWeight += room.roomWeight;
@@ -111,7 +116,9 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   };
 
   const syncInventoryState = () => {
+    // Recalculate whenever item weights or inclusion toggles change.
     recalculateWeights();
+    // Persist checkbox state so inclusion choices survive page reloads.
     saveInventory(inventory);
   };
 
@@ -139,7 +146,9 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
             ${filteredItems
               .map(
                 (item, itemIndex) => `
-                  <li class="inventory-item">
+                  <li class="inventory-item ${
+                    item.includeInEstimate ? "" : "inventory-item--excluded"
+                  }">
                     <div class="inventory-item-header">
                       <strong>${item.label}</strong>
                       <label class="inventory-item-weight">
@@ -149,11 +158,22 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
                           min="1"
                           step="1"
                           value="${item.weight}"
+                          data-field="weight"
                           data-room-index="${roomIndex}"
                           data-item-index="${itemIndex}"
                         />
                       </label>
                     </div>
+                    <label class="inventory-item-include">
+                      <input
+                        type="checkbox"
+                        data-field="include"
+                        data-room-index="${roomIndex}"
+                        data-item-index="${itemIndex}"
+                        ${item.includeInEstimate ? "checked" : ""}
+                      />
+                      Include in weight estimate
+                    </label>
                     ${
                       item.notes
                         ? `<p class="inventory-notes">${item.notes}</p>`
@@ -252,6 +272,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       label,
       notes,
       weight: estimateItemWeight(label),
+      includeInEstimate: true,
     });
     syncInventoryState();
     labelInput.value = "";
@@ -260,12 +281,12 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   });
 
   roomsContainer.addEventListener("change", (event) => {
-    const weightInput = event.target.closest("input[data-room-index]");
-    if (!weightInput) {
+    const target = event.target.closest("input[data-field]");
+    if (!target) {
       return;
     }
-    const roomIndex = Number(weightInput.dataset.roomIndex);
-    const itemIndex = Number(weightInput.dataset.itemIndex);
+    const roomIndex = Number(target.dataset.roomIndex);
+    const itemIndex = Number(target.dataset.itemIndex);
     if (Number.isNaN(roomIndex) || Number.isNaN(itemIndex)) {
       return;
     }
@@ -273,7 +294,12 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     if (!item) {
       return;
     }
-    item.weight = coerceWeight(weightInput.value, item.label);
+    if (target.dataset.field === "weight") {
+      item.weight = coerceWeight(target.value, item.label);
+    }
+    if (target.dataset.field === "include") {
+      item.includeInEstimate = target.checked;
+    }
     syncInventoryState();
     renderRooms();
   });

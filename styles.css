@@ -449,6 +449,11 @@ main {
   background: var(--bg);
 }
 
+.inventory-item--excluded {
+  opacity: 0.6;
+  border-style: dashed;
+}
+
 .inventory-item-header {
   display: flex;
   flex-wrap: wrap;
@@ -459,6 +464,10 @@ main {
 
 .inventory-item strong {
   font-weight: 600;
+}
+
+.inventory-item--excluded strong {
+  color: var(--muted);
 }
 
 .inventory-item-weight {
@@ -474,6 +483,14 @@ main {
   border-radius: 8px;
   border: 1px solid var(--border);
   font-family: inherit;
+}
+
+.inventory-item-include {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
 .inventory-notes {
