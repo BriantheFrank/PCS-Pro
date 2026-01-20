@@ -63,29 +63,6 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   let inventory = loadInventory();
   let currentQuery = "";
   let activeLabelItem = null;
-  let scannerStream = null;
-  let scannerAnimation = null;
-
-  // QR-related helpers ensure each item has a unique ID and QR value.
-  const generateItemId = () => {
-    if (window.crypto && typeof window.crypto.randomUUID === "function") {
-      return `box-${window.crypto.randomUUID()}`;
-    }
-    return `box-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
-  };
-
-  const ensureInventoryIdentifiers = () => {
-    inventory.rooms.forEach((room) => {
-      room.items.forEach((item) => {
-        if (!item.id) {
-          item.id = generateItemId();
-        }
-        if (!item.qrValue) {
-          item.qrValue = item.id;
-        }
-      });
-    });
-  };
 
   const normalize = (value) => value.trim().toLowerCase();
 
@@ -140,29 +117,9 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   };
 
   const syncInventoryState = () => {
-    ensureInventoryIdentifiers();
     recalculateWeights();
     // Persist checkbox state so inclusion choices survive page reloads.
     saveInventory(inventory);
-  };
-
-  // QR-related helper for rendering QR codes in item lists and labels.
-  const renderQrCode = (container, value, size = 64) => {
-    if (!container) {
-      return;
-    }
-    container.innerHTML = "";
-    if (!window.QRCode) {
-      container.textContent = value;
-      return;
-    }
-    // QR code generation (client-side only).
-    new QRCode(container, {
-      text: value,
-      width: size,
-      height: size,
-      correctLevel: QRCode.CorrectLevel.M,
-    });
   };
 
   // Build the room inventory card with collapsible content and inline add-item form.
@@ -211,7 +168,6 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
                           : ""
                       }
                       <div class="inventory-item-footer">
-                        <div class="qr-code" data-qr-value="${item.qrValue}" aria-label="QR code for ${item.label}"></div>
                         <div class="inventory-item-actions">
                           <button
                             type="button"
@@ -293,12 +249,6 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     if (totalWeightDisplay) {
       totalWeightDisplay.textContent = `${inventory.totalWeight} lbs`;
     }
-
-    // QR code rendering happens after rooms render into the DOM.
-    document.querySelectorAll(".qr-code[data-qr-value]").forEach((node) => {
-      const value = node.dataset.qrValue;
-      renderQrCode(node, value, 72);
-    });
   };
 
   // Add a room to the inventory state.
@@ -333,10 +283,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       label,
       notes,
       weight: estimateItemWeight(label),
-      id: generateItemId(),
-      qrValue: null,
     };
-    newItem.qrValue = newItem.id;
     inventory.rooms[roomIndex].items.push(newItem);
     syncInventoryState();
     labelInput.value = "";
@@ -374,29 +321,28 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     renderRooms();
   });
 
-  // QR-related label preview & print handling.
+  // Label preview & print handling.
   const labelPanel = document.querySelector("#label-panel");
   const labelTitle = document.querySelector("#label-title");
   const labelRoom = document.querySelector("#label-room");
   const labelWeight = document.querySelector("#label-weight");
   const labelNotes = document.querySelector("#label-notes");
-  const labelId = document.querySelector("#label-id");
-  const labelQr = document.querySelector("#label-qr");
+  const labelNotesRow = document.querySelector("#label-notes-row");
   const printLabelButton = document.querySelector("#print-label-button");
   const closeLabelButton = document.querySelector("#close-label-button");
 
   const openLabelPanel = (room, item) => {
-    if (!labelPanel || !labelTitle || !labelRoom || !labelWeight || !labelId) {
+    if (!labelPanel || !labelTitle || !labelRoom || !labelWeight) {
       return;
     }
     activeLabelItem = { room, item };
     labelTitle.textContent = item.label;
-    labelRoom.textContent = `Room: ${room.name}`;
-    labelWeight.textContent = `Estimated weight: ${item.weight} lbs`;
-    labelId.textContent = item.id;
-    labelNotes.textContent = item.notes ? `Notes: ${item.notes}` : "";
-    labelNotes.style.display = item.notes ? "block" : "none";
-    renderQrCode(labelQr, item.qrValue, 160);
+    labelRoom.textContent = room.name;
+    labelWeight.textContent = `${item.weight} lbs`;
+    labelNotes.textContent = item.notes ? item.notes : "";
+    if (labelNotesRow) {
+      labelNotesRow.hidden = !item.notes;
+    }
     labelPanel.hidden = false;
     labelPanel.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -437,158 +383,6 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       window.print();
     }
   });
-
-  // QR scanning logic uses jsQR to match scanned values to stored items.
-  const scanButton = document.querySelector("#scan-qr-button");
-  const scannerModal = document.querySelector("#scanner-modal");
-  const scannerVideo = document.querySelector("#scanner-video");
-  const scannerCanvas = document.querySelector("#scanner-canvas");
-  const scannerStatus = document.querySelector("#scanner-status");
-  const scannerResult = document.querySelector("#scanner-result");
-  const closeScannerButton = document.querySelector("#close-scanner-button");
-
-  const stopScanner = () => {
-    if (scannerAnimation) {
-      cancelAnimationFrame(scannerAnimation);
-      scannerAnimation = null;
-    }
-    if (scannerStream) {
-      scannerStream.getTracks().forEach((track) => track.stop());
-      scannerStream = null;
-    }
-    if (scannerVideo) {
-      scannerVideo.srcObject = null;
-    }
-  };
-
-  const displayScanResult = (item) => {
-    if (!scannerResult) {
-      return;
-    }
-    if (!item) {
-      scannerResult.innerHTML = "<p class=\"scanner-error\">Item not found.</p>";
-      return;
-    }
-    scannerResult.innerHTML = `
-      <div class="scanner-item">
-        <h3>${item.label}</h3>
-        <p><strong>Room:</strong> ${item.room}</p>
-        <p><strong>Estimated weight:</strong> ${item.weight} lbs</p>
-        ${item.notes ? `<p><strong>Notes:</strong> ${item.notes}</p>` : ""}
-        <p class="scanner-id">Box ID: ${item.id}</p>
-      </div>
-    `;
-  };
-
-  const findItemById = (qrValue) => {
-    for (const room of inventory.rooms) {
-      for (const item of room.items) {
-        if (item.id === qrValue || item.qrValue === qrValue) {
-          return { ...item, room: room.name };
-        }
-      }
-    }
-    return null;
-  };
-
-  const scanFrame = () => {
-    if (!scannerVideo || !scannerCanvas) {
-      return;
-    }
-    const context = scannerCanvas.getContext("2d");
-    if (!context || scannerVideo.readyState !== scannerVideo.HAVE_ENOUGH_DATA) {
-      scannerAnimation = requestAnimationFrame(scanFrame);
-      return;
-    }
-    scannerCanvas.width = scannerVideo.videoWidth;
-    scannerCanvas.height = scannerVideo.videoHeight;
-    context.drawImage(scannerVideo, 0, 0, scannerCanvas.width, scannerCanvas.height);
-    const imageData = context.getImageData(
-      0,
-      0,
-      scannerCanvas.width,
-      scannerCanvas.height
-    );
-    const code = window.jsQR
-      ? window.jsQR(imageData.data, imageData.width, imageData.height)
-      : null;
-    if (code?.data) {
-      const match = findItemById(code.data);
-      if (scannerStatus) {
-        scannerStatus.textContent = match
-          ? "Box found. Details below."
-          : "Box scanned, but no match was found.";
-      }
-      displayScanResult(match);
-      stopScanner();
-      return;
-    }
-    scannerAnimation = requestAnimationFrame(scanFrame);
-  };
-
-  const startScanner = async () => {
-    if (!scannerModal || !scannerVideo) {
-      return;
-    }
-    scannerModal.hidden = false;
-    if (scannerStatus) {
-      scannerStatus.textContent = "Starting camera...";
-    }
-    if (scannerResult) {
-      scannerResult.textContent = "";
-    }
-    if (!navigator.mediaDevices?.getUserMedia) {
-      if (scannerStatus) {
-        scannerStatus.textContent =
-          "Camera access is not available in this browser.";
-      }
-      return;
-    }
-    try {
-      scannerStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-      scannerVideo.srcObject = scannerStream;
-      await scannerVideo.play();
-      if (scannerStatus) {
-        scannerStatus.textContent = "Point the camera at a QR label.";
-      }
-      scanFrame();
-    } catch (error) {
-      if (scannerStatus) {
-        scannerStatus.textContent =
-          "Unable to access the camera. Check permissions.";
-      }
-    }
-  };
-
-  if (scanButton) {
-    scanButton.addEventListener("click", () => {
-      if (!window.jsQR) {
-        if (scannerStatus) {
-          scannerStatus.textContent =
-            "QR scanning library failed to load.";
-        }
-      }
-      startScanner();
-    });
-  }
-
-  if (closeScannerButton && scannerModal) {
-    closeScannerButton.addEventListener("click", () => {
-      scannerModal.hidden = true;
-      stopScanner();
-    });
-  }
-
-  if (scannerModal) {
-    scannerModal.addEventListener("click", (event) => {
-      if (event.target.closest("[data-action='close-scanner']")) {
-        scannerModal.hidden = true;
-        stopScanner();
-      }
-    });
-  }
 
   syncInventoryState();
   renderRooms();
