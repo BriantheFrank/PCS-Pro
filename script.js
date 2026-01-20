@@ -67,45 +67,93 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   const normalize = (value) => value.trim().toLowerCase();
 
   // Estimation model note:
-  // Professional moving estimators typically assign average weights to common
-  // box sizes (small ~25 lbs, medium ~35-40 lbs, large ~60 lbs, wardrobe ~75 lbs).
-  // This mirrors that guidance by mapping label keywords to those box weights
-  // and defaulting unknown items to a standard box average (40 lbs).
-  const WEIGHT_ESTIMATES = [
-    { keywords: ["wardrobe"], weight: 75 },
-    { keywords: ["large box", "large"], weight: 60 },
-    { keywords: ["medium box", "medium"], weight: 40 },
-    { keywords: ["small box", "small"], weight: 25 },
-    { keywords: ["book", "books"], weight: 45 },
+  // The defaults below align with commonly cited household goods weight ranges
+  // used by moving companies and PCS planning guidance:
+  // - Standard moving box ≈ 40 lbs
+  // - Couch/sofa ≈ 200–300 lbs
+  // - Dining table ≈ 150–250 lbs
+  // - Queen bed ≈ 150–200 lbs
+  // - Dresser ≈ 100–200 lbs
+  // - Refrigerator/large appliance ≈ 250–400 lbs
+  // Values are set to midpoints of those ranges for realistic planning.
+  const CATEGORY_DEFINITIONS = [
+    { label: "Moving Box", defaultWeight: 40 },
+    { label: "Couch / Sofa", defaultWeight: 250 },
+    { label: "Chair", defaultWeight: 40 },
+    { label: "Bed", defaultWeight: 175 },
+    { label: "Dresser", defaultWeight: 150 },
+    { label: "Table", defaultWeight: 200 },
+    { label: "Appliance", defaultWeight: 300 },
+    { label: "Miscellaneous", defaultWeight: 40 },
   ];
 
-  const DEFAULT_ITEM_WEIGHT = 40;
+  const getCategoryDefinition = (categoryLabel) =>
+    CATEGORY_DEFINITIONS.find((category) => category.label === categoryLabel) ||
+    CATEGORY_DEFINITIONS[CATEGORY_DEFINITIONS.length - 1];
 
-  const estimateItemWeight = (label) => {
+  const inferCategoryFromLabel = (label) => {
     const normalizedLabel = normalize(label);
-    const match = WEIGHT_ESTIMATES.find(({ keywords }) =>
-      keywords.some((keyword) => normalizedLabel.includes(keyword))
-    );
-    return match ? match.weight : DEFAULT_ITEM_WEIGHT;
+    if (normalizedLabel.includes("box")) {
+      return "Moving Box";
+    }
+    if (normalizedLabel.includes("sofa") || normalizedLabel.includes("couch")) {
+      return "Couch / Sofa";
+    }
+    if (normalizedLabel.includes("bed")) {
+      return "Bed";
+    }
+    if (normalizedLabel.includes("dresser")) {
+      return "Dresser";
+    }
+    if (normalizedLabel.includes("table")) {
+      return "Table";
+    }
+    if (
+      normalizedLabel.includes("fridge") ||
+      normalizedLabel.includes("refrigerator") ||
+      normalizedLabel.includes("appliance")
+    ) {
+      return "Appliance";
+    }
+    if (normalizedLabel.includes("chair")) {
+      return "Chair";
+    }
+    return "Miscellaneous";
   };
 
-  const coerceWeight = (weight, label) => {
+  const coerceWeight = (weight, fallbackWeight) => {
     const numericWeight = Number(weight);
     if (Number.isFinite(numericWeight) && numericWeight > 0) {
       return numericWeight;
     }
-    return estimateItemWeight(label);
+    return fallbackWeight;
   };
+
+  const ensureItemDefaults = (item) => {
+    if (!item.category) {
+      item.category = inferCategoryFromLabel(item.label);
+    }
+    const categoryDefinition = getCategoryDefinition(item.category);
+    item.weight = coerceWeight(item.weight, categoryDefinition.defaultWeight);
+    if (typeof item.includeInEstimate !== "boolean") {
+      item.includeInEstimate = true;
+    }
+  };
+
+  const buildCategoryOptions = (selectedCategory) =>
+    CATEGORY_DEFINITIONS.map(
+      (category) =>
+        `<option value="${category.label}" ${
+          category.label === selectedCategory ? "selected" : ""
+        }>${category.label}</option>`
+    ).join("");
 
   const recalculateWeights = () => {
     let totalWeight = 0;
     inventory.rooms.forEach((room) => {
       let roomWeight = 0;
       room.items.forEach((item) => {
-        item.weight = coerceWeight(item.weight, item.label);
-        if (typeof item.includeInEstimate !== "boolean") {
-          item.includeInEstimate = true;
-        }
+        ensureItemDefaults(item);
         if (item.includeInEstimate) {
           roomWeight += item.weight;
         }
@@ -144,22 +192,49 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
         ? `<p class="inventory-empty">No matching items yet.</p>`
         : `<ul class="inventory-items">
             ${filteredItems
-              .map(
-                (item, itemIndex) => `
-                  <li class="inventory-item">
+              .map((item, itemIndex) => {
+                const categoryOptions = buildCategoryOptions(item.category);
+                const isIncluded = item.includeInEstimate;
+                return `
+                  <li class="inventory-item ${
+                    isIncluded ? "" : "inventory-item--excluded"
+                  }">
                     <div class="inventory-item-main">
                       <div class="inventory-item-header">
                         <strong>${item.label}</strong>
-                        <label class="inventory-item-weight">
+                      </div>
+                      <div class="inventory-item-fields">
+                        <label class="inventory-item-field">
+                          Category
+                          <select
+                            data-field="category"
+                            data-room-index="${roomIndex}"
+                            data-item-index="${itemIndex}"
+                          >
+                            ${categoryOptions}
+                          </select>
+                        </label>
+                        <label class="inventory-item-field">
                           Estimated weight (lbs)
                           <input
                             type="number"
                             min="1"
                             step="1"
                             value="${item.weight}"
+                            data-field="weight"
                             data-room-index="${roomIndex}"
                             data-item-index="${itemIndex}"
                           />
+                        </label>
+                        <label class="inventory-item-field inventory-item-checkbox">
+                          <input
+                            type="checkbox"
+                            data-field="include"
+                            data-room-index="${roomIndex}"
+                            data-item-index="${itemIndex}"
+                            ${isIncluded ? "checked" : ""}
+                          />
+                          <span>Include in weight estimate</span>
                         </label>
                       </div>
                       ${
@@ -191,8 +266,8 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
                       </div>
                     </div>
                   </li>
-                `
-              )
+                `;
+              })
               .join("")}
           </ul>`;
 
@@ -211,6 +286,10 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
             placeholder="Box 1 – Dishes"
             required
           />
+          <label for="item-category-${roomIndex}">Item category</label>
+          <select id="item-category-${roomIndex}" name="item-category">
+            ${buildCategoryOptions("Moving Box")}
+          </select>
           <label for="item-notes-${roomIndex}">Notes (optional)</label>
           <textarea
             id="item-notes-${roomIndex}"
@@ -273,16 +352,21 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     event.preventDefault();
     const roomIndex = Number(form.dataset.roomIndex);
     const labelInput = form.querySelector("input[name='item-label']");
+    const categorySelect = form.querySelector("select[name='item-category']");
     const notesInput = form.querySelector("textarea[name='item-notes']");
     const label = labelInput.value.trim();
     const notes = notesInput.value.trim();
+    const category = categorySelect?.value || "Miscellaneous";
     if (!label || Number.isNaN(roomIndex)) {
       return;
     }
+    const categoryDefinition = getCategoryDefinition(category);
     const newItem = {
       label,
+      category,
       notes,
-      weight: estimateItemWeight(label),
+      weight: categoryDefinition.defaultWeight,
+      includeInEstimate: true,
     };
     inventory.rooms[roomIndex].items.push(newItem);
     syncInventoryState();
@@ -292,7 +376,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   });
 
   roomsContainer.addEventListener("change", (event) => {
-    const target = event.target.closest("input[data-field]");
+    const target = event.target.closest("[data-field]");
     if (!target) {
       return;
     }
@@ -305,8 +389,15 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     if (!item) {
       return;
     }
+    if (target.dataset.field === "category") {
+      item.category = target.value;
+      item.weight = getCategoryDefinition(item.category).defaultWeight;
+    }
     if (target.dataset.field === "weight") {
-      item.weight = coerceWeight(target.value, item.label);
+      item.weight = coerceWeight(
+        target.value,
+        getCategoryDefinition(item.category).defaultWeight
+      );
     }
     if (target.dataset.field === "include") {
       item.includeInEstimate = target.checked;

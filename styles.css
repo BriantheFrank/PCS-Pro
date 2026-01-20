@@ -340,6 +340,7 @@ main {
 
 .inventory-search input,
 .inventory-form input,
+.inventory-form select,
 .inventory-form textarea {
   width: 100%;
   padding: 0.65rem 0.8rem;
@@ -466,23 +467,45 @@ main {
   font-weight: 600;
 }
 
-.inventory-item--excluded strong {
-  color: var(--muted);
+.inventory-item--excluded {
+  opacity: 0.6;
 }
 
-.inventory-item-weight {
+.inventory-item-fields {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.inventory-item-field {
   display: grid;
   gap: 0.2rem;
   font-size: 0.85rem;
   color: var(--muted);
 }
 
-.inventory-item-weight input {
-  width: 110px;
+.inventory-item-field input,
+.inventory-item-field select {
+  width: 100%;
   padding: 0.35rem 0.5rem;
   border-radius: 8px;
   border: 1px solid var(--border);
   font-family: inherit;
+}
+
+.inventory-item-checkbox {
+  align-content: end;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.inventory-item-checkbox input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--accent);
 }
 
 .inventory-item-footer {
