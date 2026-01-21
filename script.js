@@ -223,6 +223,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     roomsContainer.querySelectorAll(".item-menu-trigger").forEach((button) => {
       button.setAttribute("aria-expanded", "false");
     });
+    activeMenuItemId = null;
   };
 
   const closeItemPanels = () => {
@@ -527,6 +528,8 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     roomsContainer.innerHTML = inventory.rooms
       .map((room, index) => renderRoom(room, index))
       .join("");
+    activeMenuItemId = null;
+
     if (totalWeightDisplay) {
       totalWeightDisplay.textContent = `${inventory.totalWeight} lbs`;
     }
