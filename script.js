@@ -69,7 +69,10 @@ const loadInventory = () => {
 };
 
 const saveInventory = (inventory) => {
-  localStorage.setItem(INVENTORY_KEY, JSON.stringify(inventory));
+  const serialized = JSON.stringify(inventory, (key, value) =>
+    key === "editMode" ? undefined : value
+  );
+  localStorage.setItem(INVENTORY_KEY, serialized);
 };
 
 // Inventory UI helpers are initialized only when the page includes the module elements.
@@ -161,6 +164,9 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     if (typeof item.includeInEstimate !== "boolean") {
       item.includeInEstimate = true;
     }
+    if (!item.editMode) {
+      item.editMode = null;
+    }
   };
 
   const buildCategoryOptions = (selectedCategory) =>
@@ -226,9 +232,18 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     activeMenuItemId = null;
   };
 
-  const closeItemPanels = () => {
-    roomsContainer.querySelectorAll(".inventory-item-panel").forEach((panel) => {
-      panel.hidden = true;
+  // Per-item edit mode keeps move/rename controls contextual to the active action.
+  const setItemEditMode = (roomIndex, itemIndex, mode, itemCard) => {
+    const item = inventory.rooms[roomIndex]?.items[itemIndex];
+    if (!item) {
+      return;
+    }
+    item.editMode = mode;
+    if (!itemCard) {
+      return;
+    }
+    itemCard.querySelectorAll(".inventory-item-panel").forEach((panel) => {
+      panel.hidden = panel.dataset.panel !== mode;
     });
   };
 
@@ -269,6 +284,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
               .map((item, itemIndex) => {
                 const categoryOptions = buildCategoryOptions(item.category);
                 const isIncluded = item.includeInEstimate;
+                const editMode = item.editMode || null;
                 return `
                   <li class="inventory-item ${
                     isIncluded ? "" : "inventory-item--excluded"
@@ -364,7 +380,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
                       <div
                         class="inventory-item-panel"
                         data-panel="move"
-                        hidden
+                        ${editMode === "move" ? "" : "hidden"}
                       >
                         <label class="inventory-item-field">
                           Move to room
@@ -400,7 +416,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
                       <div
                         class="inventory-item-panel"
                         data-panel="rename"
-                        hidden
+                        ${editMode === "rename" ? "" : "hidden"}
                       >
                         <label class="inventory-item-field">
                           New item name
@@ -923,22 +939,18 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       const panelName = actionButton.dataset.panel;
       const itemCard = actionButton.closest(".inventory-item");
       closeItemMenus();
-      closeItemPanels();
+      // Track per-item edit mode so move/rename controls only appear when requested.
+      setItemEditMode(roomIndex, itemIndex, panelName, itemCard);
       const panel = itemCard?.querySelector(
         `.inventory-item-panel[data-panel="${panelName}"]`
       );
-      if (panel) {
-        panel.hidden = false;
-        const focusTarget = panel.querySelector("input, select");
-        focusTarget?.focus();
-      }
+      const focusTarget = panel?.querySelector("input, select");
+      focusTarget?.focus();
       return;
     }
     if (action === "cancel-panel") {
-      const panel = actionButton.closest(".inventory-item-panel");
-      if (panel) {
-        panel.hidden = true;
-      }
+      const itemCard = actionButton.closest(".inventory-item");
+      setItemEditMode(roomIndex, itemIndex, null, itemCard);
       return;
     }
     if (action === "confirm-move") {
@@ -949,7 +961,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
         return;
       }
       if (destinationIndex === roomIndex) {
-        closeItemPanels();
+        setItemEditMode(roomIndex, itemIndex, null, itemCard);
         return;
       }
       const oldRoomName = room.name;
@@ -957,6 +969,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       if (!movedItem) {
         return;
       }
+      movedItem.editMode = null;
       const wasActive =
         activeLabelItem &&
         activeLabelItem.roomIndex === roomIndex &&
@@ -989,6 +1002,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       }
       const oldLabel = item.label;
       item.label = newLabel;
+      item.editMode = null;
       if (
         item.labelSettings &&
         (!item.labelSettings.title || item.labelSettings.title === oldLabel)
