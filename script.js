@@ -83,6 +83,8 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   let inventory = loadInventory();
   let currentQuery = "";
   let activeLabelItem = null;
+  // Track which item's action menu is open so toggles stay scoped per item.
+  let activeMenuItemId = null;
   let openRoomIndexes = new Set();
 
   const normalize = (value) => value.trim().toLowerCase();
@@ -221,6 +223,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     roomsContainer.querySelectorAll(".item-menu-trigger").forEach((button) => {
       button.setAttribute("aria-expanded", "false");
     });
+    activeMenuItemId = null;
   };
 
   const closeItemPanels = () => {
@@ -525,6 +528,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     roomsContainer.innerHTML = inventory.rooms
       .map((room, index) => renderRoom(room, index))
       .join("");
+    activeMenuItemId = null;
 
     if (totalWeightDisplay) {
       totalWeightDisplay.textContent = `${inventory.totalWeight} lbs`;
@@ -899,17 +903,19 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     }
     const action = actionButton.dataset.action;
     if (action === "toggle-item-menu") {
-      // Toggle menus explicitly on click and ensure only one menu is open.
+      // Toggle the clicked menu, ensuring only one menu is open at a time.
       const menuWrapper = actionButton.closest(".inventory-item-menu");
       const menu = menuWrapper?.querySelector(".item-menu-dropdown");
       if (!menu || !menuWrapper) {
         return;
       }
-      const shouldOpen = menu.hidden;
+      const menuId = `${roomIndex}-${itemIndex}`;
+      const shouldOpen = activeMenuItemId !== menuId || menu.hidden;
       closeItemMenus();
       if (shouldOpen) {
         menu.hidden = false;
         actionButton.setAttribute("aria-expanded", "true");
+        activeMenuItemId = menuId;
       }
       return;
     }
