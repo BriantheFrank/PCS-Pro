@@ -88,6 +88,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   let activeLabelItem = null;
   // Track which item's action menu is open so toggles stay scoped per item.
   let activeMenuItemId = null;
+  let activeRoomMenuIndex = null;
   let openRoomIndexes = new Set();
 
   const normalize = (value) => value.trim().toLowerCase();
@@ -223,13 +224,32 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   };
 
   const closeItemMenus = () => {
-    roomsContainer.querySelectorAll(".item-menu-dropdown").forEach((menu) => {
-      menu.hidden = true;
-    });
-    roomsContainer.querySelectorAll(".item-menu-trigger").forEach((button) => {
-      button.setAttribute("aria-expanded", "false");
-    });
+    roomsContainer
+      .querySelectorAll(".inventory-item-menu .item-menu-dropdown")
+      .forEach((menu) => {
+        menu.hidden = true;
+      });
+    roomsContainer
+      .querySelectorAll(".inventory-item-menu .item-menu-trigger")
+      .forEach((button) => {
+        button.setAttribute("aria-expanded", "false");
+      });
     activeMenuItemId = null;
+  };
+
+  // Keep room-level menus isolated from item menus.
+  const closeRoomMenus = () => {
+    roomsContainer
+      .querySelectorAll(".inventory-room-menu .item-menu-dropdown")
+      .forEach((menu) => {
+        menu.hidden = true;
+      });
+    roomsContainer
+      .querySelectorAll(".inventory-room-menu .item-menu-trigger")
+      .forEach((button) => {
+        button.setAttribute("aria-expanded", "false");
+      });
+    activeRoomMenuIndex = null;
   };
 
   // Per-item edit mode keeps move/rename controls contextual to the active action.
@@ -244,6 +264,21 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     }
     itemCard.querySelectorAll(".inventory-item-panel").forEach((panel) => {
       panel.hidden = panel.dataset.panel !== mode;
+    });
+  };
+
+  // Room-level edit mode mirrors item panels for inline rename controls.
+  const setRoomEditMode = (roomIndex, mode, roomCard) => {
+    const room = inventory.rooms[roomIndex];
+    if (!room) {
+      return;
+    }
+    room.editMode = mode;
+    if (!roomCard) {
+      return;
+    }
+    roomCard.querySelectorAll("[data-room-panel]").forEach((panel) => {
+      panel.hidden = panel.dataset.roomPanel !== mode;
     });
   };
 
@@ -485,9 +520,78 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
         shouldOpen ? "open" : ""
       }>
         <summary>
-          <h3>${room.name}</h3>
-          <span class="inventory-room-meta">${itemCount} items</span>
+          <div class="inventory-room-summary">
+            <div class="inventory-room-heading">
+              <h3>${room.name}</h3>
+              <span class="inventory-room-meta">${itemCount} items</span>
+            </div>
+            <div class="inventory-room-menu">
+              <button
+                type="button"
+                class="item-menu-trigger"
+                data-action="toggle-room-menu"
+                data-room-index="${roomIndex}"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-label="Room options"
+              >
+                ⋮
+              </button>
+              <div class="item-menu-dropdown" role="menu" hidden>
+                <button
+                  type="button"
+                  class="item-menu-item"
+                  data-action="open-room-panel"
+                  data-panel="rename"
+                  data-room-index="${roomIndex}"
+                >
+                  Rename room
+                </button>
+                <button
+                  type="button"
+                  class="item-menu-item item-menu-item--danger"
+                  data-action="delete-room"
+                  data-room-index="${roomIndex}"
+                >
+                  Delete room
+                </button>
+              </div>
+            </div>
+          </div>
         </summary>
+        <div
+          class="inventory-room-panel inventory-item-panel"
+          data-room-panel="rename"
+          ${room.editMode === "rename" ? "" : "hidden"}
+        >
+          <label class="inventory-item-field">
+            New room name
+            <input
+              type="text"
+              value="${room.name}"
+              data-room-rename-input
+              data-room-index="${roomIndex}"
+            />
+          </label>
+          <div class="inventory-item-panel-actions">
+            <button
+              type="button"
+              class="label-action secondary"
+              data-action="cancel-room-panel"
+              data-room-index="${roomIndex}"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="label-action"
+              data-action="confirm-room-rename"
+              data-room-index="${roomIndex}"
+            >
+              Save Name
+            </button>
+          </div>
+        </div>
         <form class="inventory-form" data-room-index="${roomIndex}">
           <label for="item-label-${roomIndex}">Add a box or item</label>
           <input
@@ -545,6 +649,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       .map((room, index) => renderRoom(room, index))
       .join("");
     activeMenuItemId = null;
+    activeRoomMenuIndex = null;
 
     if (totalWeightDisplay) {
       totalWeightDisplay.textContent = `${inventory.totalWeight} lbs`;
@@ -902,6 +1007,9 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     if (!event.target.closest(".inventory-item-menu")) {
       closeItemMenus();
     }
+    if (!event.target.closest(".inventory-room-menu")) {
+      closeRoomMenus();
+    }
   });
 
   // Item-level action menu handlers (move, rename, delete, label shortcuts).
@@ -910,14 +1018,125 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     if (!actionButton) {
       return;
     }
+    const action = actionButton.dataset.action;
     const roomIndex = Number(actionButton.dataset.roomIndex);
-    const itemIndex = Number(actionButton.dataset.itemIndex);
-    const room = inventory.rooms[roomIndex];
-    const item = room?.items[itemIndex];
-    if (!room || !item) {
+    if (Number.isNaN(roomIndex)) {
       return;
     }
-    const action = actionButton.dataset.action;
+    const room = inventory.rooms[roomIndex];
+    if (!room) {
+      return;
+    }
+
+    // Room-level action menu handling.
+    if (action === "toggle-room-menu") {
+      event.preventDefault();
+      event.stopPropagation();
+      const menuWrapper = actionButton.closest(".inventory-room-menu");
+      const menu = menuWrapper?.querySelector(".item-menu-dropdown");
+      if (!menu || !menuWrapper) {
+        return;
+      }
+      const shouldOpen = activeRoomMenuIndex !== roomIndex || menu.hidden;
+      closeRoomMenus();
+      closeItemMenus();
+      if (shouldOpen) {
+        menu.hidden = false;
+        actionButton.setAttribute("aria-expanded", "true");
+        activeRoomMenuIndex = roomIndex;
+      }
+      return;
+    }
+    if (action === "open-room-panel") {
+      event.preventDefault();
+      event.stopPropagation();
+      const panelName = actionButton.dataset.panel;
+      const roomCard = actionButton.closest(".inventory-room");
+      closeRoomMenus();
+      closeItemMenus();
+      // Track per-room edit mode so rename controls only appear when requested.
+      setRoomEditMode(roomIndex, panelName, roomCard);
+      const panel = roomCard?.querySelector(
+        `[data-room-panel="${panelName}"]`
+      );
+      const focusTarget = panel?.querySelector("input");
+      focusTarget?.focus();
+      return;
+    }
+    if (action === "cancel-room-panel") {
+      event.preventDefault();
+      event.stopPropagation();
+      const roomCard = actionButton.closest(".inventory-room");
+      setRoomEditMode(roomIndex, null, roomCard);
+      return;
+    }
+    if (action === "confirm-room-rename") {
+      event.preventDefault();
+      event.stopPropagation();
+      const roomCard = actionButton.closest(".inventory-room");
+      const input = roomCard?.querySelector("[data-room-rename-input]");
+      const newName = input?.value.trim();
+      if (!newName) {
+        return;
+      }
+      const oldRoomName = room.name;
+      room.name = newName;
+      room.editMode = null;
+      room.items.forEach((item) => {
+        if (
+          item.labelSettings &&
+          (!item.labelSettings.room || item.labelSettings.room === oldRoomName)
+        ) {
+          item.labelSettings.room = newName;
+        }
+      });
+      syncInventoryState();
+      renderRooms();
+      refreshActiveLabelPanel();
+      return;
+    }
+    if (action === "delete-room") {
+      event.preventDefault();
+      event.stopPropagation();
+      const confirmed = window.confirm(
+        "Delete this room and all items inside it? This cannot be undone."
+      );
+      if (!confirmed) {
+        return;
+      }
+      const wasActiveRoom =
+        activeLabelItem && activeLabelItem.roomIndex === roomIndex;
+      inventory.rooms.splice(roomIndex, 1);
+      if (wasActiveRoom) {
+        if (labelPanel) {
+          labelPanel.hidden = true;
+        }
+        activeLabelItem = null;
+      } else if (activeLabelItem && activeLabelItem.roomIndex > roomIndex) {
+        activeLabelItem = {
+          roomIndex: activeLabelItem.roomIndex - 1,
+          itemIndex: activeLabelItem.itemIndex,
+        };
+      }
+      openRoomIndexes = new Set(
+        Array.from(openRoomIndexes)
+          .filter((index) => index !== roomIndex)
+          .map((index) => (index > roomIndex ? index - 1 : index))
+      );
+      closeRoomMenus();
+      closeItemMenus();
+      syncInventoryState();
+      renderRooms();
+      refreshActiveLabelPanel();
+      return;
+    }
+
+    const itemIndex = Number(actionButton.dataset.itemIndex);
+    const item = room?.items[itemIndex];
+    if (!item) {
+      return;
+    }
+
     if (action === "toggle-item-menu") {
       // Toggle the clicked menu, ensuring only one menu is open at a time.
       const menuWrapper = actionButton.closest(".inventory-item-menu");
@@ -928,6 +1147,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       const menuId = `${roomIndex}-${itemIndex}`;
       const shouldOpen = activeMenuItemId !== menuId || menu.hidden;
       closeItemMenus();
+      closeRoomMenus();
       if (shouldOpen) {
         menu.hidden = false;
         actionButton.setAttribute("aria-expanded", "true");
@@ -939,6 +1159,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       const panelName = actionButton.dataset.panel;
       const itemCard = actionButton.closest(".inventory-item");
       closeItemMenus();
+      closeRoomMenus();
       // Track per-item edit mode so move/rename controls only appear when requested.
       setItemEditMode(roomIndex, itemIndex, panelName, itemCard);
       const panel = itemCard?.querySelector(

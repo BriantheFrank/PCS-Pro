@@ -550,10 +550,7 @@ main {
 .inventory-room summary {
   list-style: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  display: block;
 }
 
 .inventory-room summary::-webkit-details-marker {
@@ -565,9 +562,32 @@ main {
   font-size: 1.15rem;
 }
 
+.inventory-room-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.inventory-room-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.inventory-room-menu {
+  position: relative;
+}
+
 .inventory-room-meta {
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.inventory-room-panel {
+  margin-top: 0.75rem;
 }
 
 .inventory-room-weight {
