@@ -642,6 +642,10 @@ main {
   gap: 0.25rem;
 }
 
+.item-menu-dropdown[hidden] {
+  display: none;
+}
+
 .item-menu-item {
   width: 100%;
   border: none;
