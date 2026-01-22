@@ -388,6 +388,12 @@ main {
   padding-top: 1rem;
 }
 
+.checklist-intro {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
 .checklist-subsection {
   display: grid;
   gap: 1rem;
