@@ -433,6 +433,40 @@ main {
   margin: 0 0 0 2rem;
   color: var(--muted);
   font-size: 0.95rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.item-help p {
+  margin: 0;
+}
+
+.item-help a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.item-help a:hover,
+.item-help a:focus-visible {
+  text-decoration: underline;
+}
+
+.sub-checklist,
+.item-tips {
+  margin: 0;
+  padding-left: 1.5rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.sub-checklist label {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.sub-checklist input[type="checkbox"] {
+  margin-top: 0.2rem;
 }
 
 .checklist-item:hover {
