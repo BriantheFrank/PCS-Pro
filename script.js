@@ -1,7 +1,10 @@
 // Persist checklist progress using localStorage.
 const STORAGE_KEY = "pcs-checklist";
 
-const checkboxes = Array.from(document.querySelectorAll("input[type='checkbox']"));
+const checklistCheckboxes = Array.from(
+  document.querySelectorAll("input[type='checkbox'][data-id]")
+);
+const checklistItems = Array.from(document.querySelectorAll(".checklist-item"));
 
 const loadState = () => {
   const stored = localStorage.getItem(STORAGE_KEY);
@@ -22,15 +25,91 @@ const saveState = (state) => {
 
 const state = loadState();
 
-checkboxes.forEach((checkbox) => {
-  const id = checkbox.dataset.id;
-  checkbox.checked = Boolean(state[id]);
+// Checklist accordion + auto-complete logic (only runs when checklist items exist).
+const areSubtasksComplete = (item) => {
+  const subtasks = Array.from(
+    item.querySelectorAll(".sub-checklist input[type='checkbox']")
+  );
+  if (subtasks.length === 0) {
+    return false;
+  }
+  return subtasks.every((subtask) => subtask.checked);
+};
 
-  checkbox.addEventListener("change", (event) => {
-    state[id] = event.target.checked;
-    saveState(state);
+const syncParentCheckboxState = (item) => {
+  const parentCheckbox = item.querySelector(
+    "input[type='checkbox'][data-role='parent']"
+  );
+  if (!parentCheckbox) {
+    return;
+  }
+  const isComplete = areSubtasksComplete(item);
+  parentCheckbox.checked = isComplete;
+  item.classList.toggle("is-complete", isComplete);
+};
+
+const setAccordionState = (item, isOpen) => {
+  const details = item.querySelector(".item-details");
+  const header = item.querySelector(".item-header");
+  const toggle = item.querySelector(".accordion-toggle");
+  if (!details || !header || !toggle) {
+    return;
+  }
+  item.classList.toggle("is-open", isOpen);
+  details.setAttribute("aria-hidden", String(!isOpen));
+  header.setAttribute("aria-expanded", String(isOpen));
+  toggle.setAttribute("aria-expanded", String(isOpen));
+};
+
+const setupAccordionItem = (item) => {
+  const header = item.querySelector(".item-header");
+  if (!header) {
+    return;
+  }
+  setAccordionState(item, false);
+
+  header.addEventListener("click", (event) => {
+    if (event.target.closest("a")) {
+      return;
+    }
+    setAccordionState(item, !item.classList.contains("is-open"));
   });
-});
+
+  header.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setAccordionState(item, !item.classList.contains("is-open"));
+    }
+  });
+};
+
+if (checklistCheckboxes.length > 0) {
+  checklistCheckboxes.forEach((checkbox) => {
+    const id = checkbox.dataset.id;
+    const isParent = checkbox.dataset.role === "parent";
+    if (!isParent) {
+      checkbox.checked = Boolean(state[id]);
+    }
+
+    if (!isParent) {
+      checkbox.addEventListener("change", (event) => {
+        state[id] = event.target.checked;
+        saveState(state);
+        const item = event.target.closest(".checklist-item");
+        if (item) {
+          syncParentCheckboxState(item);
+        }
+      });
+    }
+  });
+}
+
+if (checklistItems.length > 0) {
+  checklistItems.forEach((item) => {
+    syncParentCheckboxState(item);
+    setupAccordionItem(item);
+  });
+}
 
 // Move inventory state management using localStorage.
 const INVENTORY_KEY = "pcs-move-inventory";
