@@ -1,37 +1,47 @@
 <!doctype html>
+<!-- HTML5 Document Type Declaration - tells the browser how to interpret this file -->
 <html lang="en">
+  <!-- Head section contains metadata and links to external resources -->
   <head>
+    <!-- Character encoding ensures special characters display correctly in all browsers -->
     <meta charset="UTF-8" />
+    <!-- Viewport meta tag makes the page responsive on mobile devices
+         width=device-width scales content to match device screen width
+         initial-scale=1 sets default zoom level to 100% -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Page title appears in browser tabs and search engine results -->
     <title>Fort Bliss - Army Duty Station</title>
-    <!--
-      Detail page for Fort Bliss.
-    -->
+    <!-- Link to shared stylesheet (styles.css) that controls layout and visual styling across all pages -->
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- Header section appears at the top of every page (shared across the application) -->
     <header class="site-header">
       <div class="container">
+        <!-- Top navigation bar with site logo and main navigation links -->
         <div class="top-bar">
+          <!-- Brand link returns users to the home page from any location -->
           <a class="brand" href="index.html">PCS Move Planner</a>
+          <!-- Primary navigation menu - note that "Destination Bases" is marked as active
+               since this is a duty station detail page (bases.html is the parent) -->
           <nav class="site-nav">
             <a href="pcs-checklist.html">PCS Checklist</a>
             <a href="move-organizer.html">Move Organizer</a>
             <a class="is-active" href="bases.html">Destination Bases</a>
           </nav>
         </div>
+        <!-- Eyebrow text provides context above the main heading -->
         <p class="eyebrow">Army Duty Station</p>
-        <h1>Fort Bliss</h1>
-        <p class="subtitle">U.S. Army Installation</p>
-        <p>Fort Bliss spans the El Paso region and supports armored forces and air defense headquarters, pairing expansive training ranges with senior leader education programs.</p>
-      </div>
-    </header>
-
+     !-- Main content area of the page -->
     <main class="container">
 
+      <!-- First information section covering essential post services and resources -->
       <section class="base-detail">
         <h2>Post Information</h2>
+        <!-- Grid layout uses CSS Flexbox (defined in styles.css) to create responsive card layout
+             Cards automatically wrap to new rows on smaller screens -->
         <div class="base-grid">
+          <!-- Each card represents a key facility or resource at the base -->
           <div class="base-card">
             <h3>In-Processing / Reception</h3>
             <p>
@@ -47,6 +57,8 @@
               essentials for eligible patrons.
             </p>
           </div>
+          <!-- Cards can include external links - note the use of an external URL
+               External links should open in a new tab (see styles.css for link styling) -->
           <div class="base-card">
             <h3>PX / Exchange</h3>
             <p>
@@ -55,12 +67,25 @@
             </p>
             <a class="card-link" href="https://www.aafes.com/">AAFES Exchange Overview</a>
           </div>
+          <!-- Cards can contain structured lists for multiple items within a single topic -->
           <div class="base-card">
             <h3>Major Unit Areas</h3>
             <p>Major unit areas include:</p>
             <ul class="base-units">
-<li>1st Armored Division</li>
-          <li>32nd Army Air &amp; Missile Defense Command</li>
+              <li>1st Armored Division</li>
+              <li>32nd Army Air &amp; Missile Defense Command</li>
+                </p>
+            <a class="card-link" href="https://www.aafes.com/">AAFES Exchange Overview</a>
+          </div>
+          <div class="base-card">
+            <h3>Major Unit Areas</h3>
+            <p>Major unit areas include:</p>
+       !-- Second information section focusing on housing options available to military families -->
+      <section class="base-detail">
+        <h2>On-Post &amp; DoD Housing</h2>
+        <!-- Same grid layout reused from the previous section (DRY principle - reuse styles) -->
+        <div class="base-grid">
+          <!-- Housing cards provide guidance on residential options --mp; Missile Defense Command</li>
           <li>U.S. Army Sergeants Major Academy</li>
             </ul>
           </div>
@@ -92,20 +117,12 @@
               across the main installation.
             </p>
           </div>
-          <div class="base-card">
-            <h3>DoD-Managed Housing Areas</h3>
-            <p>
-              DoD-managed or privatized housing communities may be located on
-              or adjacent to the installation.
-            </p>
-          </div>
-        </div>
-      </section>
-
-
+       !-- Third information section providing geographic context about the region -->
       <section class="base-detail">
         <h2>Nearby Cities &amp; Towns (Within ~45 Minutes)</h2>
+        <!-- Same reusable grid layout for consistency across all sections -->
         <div class="base-grid">
+          <!-- Community cards help military families explore civilian areas near the base -->
           <div class="base-card">
             <h3>El Paso</h3>
             <p>Primary city adjacent to the installation.</p>
@@ -123,6 +140,21 @@
             <p>Nearby New Mexico community west of El Paso.</p>
           </div>
           <div class="base-card">
+            <h3>Las Cruces</h3>
+            <p>City in southern New Mexico within driving distance.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation link to return users to the base index page (bases.html)
+           Using the &larr; HTML entity for a left arrow symbol -->
+      <a class="back-link" href="bases.html">&larr; Back to Army Duty Stations</a>
+    </main>
+
+    <!-- Footer section appears at the bottom of every page (shared across the application) -->
+    <footer class="site-footer">
+      <div class="container">
+        <!-- Footer message reinforces the purpose of the application --ard">
             <h3>Las Cruces</h3>
             <p>City in southern New Mexico within driving distance.</p>
           </div>

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- PAGE HEADER: Top-level navigation and page title -->
     <header class="site-header">
       <div class="container">
         <!--
@@ -38,20 +39,29 @@
       </div>
     </header>
 
+    <!-- MAIN CONTENT: Checklist layout and sections -->
     <main class="container">
+      <!-- LEGAL DISCLAIMER: Important notice about the checklist's limitations -->
       <div class="disclaimer-banner">
         <strong>Disclaimer:</strong> This checklist is for planning purposes only
         and does not replace official guidance from your unit, transportation
         office, or finance office.
       </div>
 
+      <!-- CHECKLIST LAYOUT: Main content area and sidebar for the checklist -->
       <div class="checklist-layout">
+        <!-- PRIMARY CHECKLIST CONTENT: All checklist sections and items -->
         <div class="checklist-main">
           <!--
             Split the checklist so service members and spouses can track separate
             responsibilities without hiding either list.
           -->
           <!-- Family-first ordering: spouse & family checklist appears first. -->
+          <!-- SECTION 1: SPOUSE & FAMILY CHECKLIST
+               This expandable section contains tasks for military spouses and family members.
+               The 'open' attribute means this section is expanded by default on page load.
+               Each checklist item is a parent task with sub-tasks that auto-check the parent when complete.
+          -->
           <details class="checklist-section" data-section="spouse-family" open>
             <summary>
               <h2>Spouse &amp; Family Checklist</h2>
@@ -62,7 +72,13 @@
                 routines. They often run in parallel with the service member's
                 official requirements.
               </p>
+              <!-- CHECKLIST ITEM: Individual task with expandable details
+                   Attributes:
+                   - data-item: Unique identifier for tracking item state
+                   - Class 'checklist-item': Required for script.js accordion functionality
+              -->
               <div class="checklist-item" data-item="family-housing-research">
+                <!-- ITEM HEADER: Clickable title area with parent checkbox and toggle button -->
                 <div
                   class="item-header"
                   role="button"
@@ -70,6 +86,12 @@
                   aria-expanded="false"
                   aria-controls="family-housing-research-details"
                 >
+                  <!-- PARENT CHECKBOX: Main task checkbox that auto-checks when all subtasks are complete
+                       Attributes:
+                       - data-id: Unique identifier for localStorage persistence
+                       - data-role='parent': Signals script.js to auto-check this when subtasks complete
+                       - disabled: Parent state is calculated (not directly editable by user)
+                  -->
                   <label class="item-parent">
                     <input
                       type="checkbox"
@@ -81,6 +103,12 @@
                       Research housing options and schools at the new location
                     </span>
                   </label>
+                  <!-- ACCORDION TOGGLE BUTTON: Expands/collapses the item details section
+                       Attributes:
+                       - aria-expanded: Tells assistive technology whether details are visible
+                       - aria-controls: Links button to the details section it controls
+                       - aria-label: Provides accessible description for screen readers
+                  -->
                   <button
                     class="accordion-toggle"
                     type="button"
@@ -91,11 +119,18 @@
                     <span class="accordion-icon" aria-hidden="true">▾</span>
                   </button>
                 </div>
+                <!-- ITEM DETAILS: Expandable content section containing guidance and subtasks
+                     Attributes:
+                     - id: Must match aria-controls on the toggle button
+                     - aria-hidden: Tells assistive technology when section is visible/hidden
+                     - This section starts hidden and is revealed when user clicks the toggle
+                -->
                 <div
                   class="item-details item-help"
                   id="family-housing-research-details"
                   aria-hidden="true"
                 >
+                  <!-- ITEM GUIDANCE: Explains the purpose and timing of this task -->
                   <p>
                     <strong>What this is:</strong> Compare on-post housing, off-post
                     neighborhoods, school districts, and commuting time.
@@ -113,9 +148,16 @@
                     <a href="https://www.dodea.edu/">DoDEA</a>
                     to compare schools.
                   </p>
+                  <!-- SUBTASKS: Individual checkboxes that are children of the parent task
+                       These are NOT disabled and can be checked/unchecked by the user.
+                       When ALL subtasks are checked, the parent checkbox auto-checks.
+                  -->
                   <ul class="sub-checklist">
                     <li>
                       <label>
+                        <!-- SUBTASK CHECKBOX: Regular checkbox (no data-role attribute)
+                             These checkboxes trigger localStorage saves and parent sync on change
+                        -->
                         <input
                           type="checkbox"
                           data-id="family-housing-research-1"
@@ -160,6 +202,7 @@
                       </label>
                     </li>
                   </ul>
+                  <!-- TIPS & PITFALLS: Educational content highlighting common mistakes and best practices -->
                   <ul class="item-tips">
                     <li><strong>Pitfall:</strong> Relying only on photos without verifying commute and school zoning.</li>
                     <li><strong>Pro tip:</strong> Ask about temporary lodging allowance limits before signing a lease.</li>
@@ -462,8 +505,10 @@
                     goods may arrive late, so you need essentials on hand.
                   </p>
                   <p>
-                    <strong>Timing:</strong> Pack 1–3 days before departure. Check
-                    the
+                    <strong>Timing:</strong> "Pack 1–3 days before departure. Most 
+                    PCS moves within the continental U.S. are by car, so prioritize 
+                    comfort items (snacks, books, entertainment for kids) and clothing 
+                    for overnight stops. If you're flying, Check the
                     <a href="https://www.tsa.gov/travel/security-screening/whatcanibring/all">
                       TSA “What Can I Bring?”
                     </a>
@@ -491,19 +536,25 @@
                     <li>
                       <label>
                         <input type="checkbox" data-id="family-travel-kit-4" />
-                        <span>Bring kid comfort items, snacks, and a change of clothes.</span>
+                        <span>Pack one week of clothing for each family member.</span>
                       </label>
                     </li>
                     <li>
                       <label>
                         <input type="checkbox" data-id="family-travel-kit-5" />
+                        <span>Bring kid comfort items, snacks, and a change of clothes.</span>
+                      </label>
+                    </li>
+                    <li>
+                      <label>
+                        <input type="checkbox" data-id="family-travel-kit-6" />
                         <span>Keep small valuables and jewelry with you.</span>
                       </label>
                     </li>
                   </ul>
                   <ul class="item-tips">
                     <li><strong>Pitfall:</strong> Packing passports or orders in checked luggage.</li>
-                    <li><strong>Pro tip:</strong> Use a clear folder so paperwork is easy at check-in.</li>
+                    <li><strong>Pro tip:</strong> For driving trips, bring extra snacks and entertainment. For flights, use a clear folder so paperwork is easy at check-in.</li>
                   </ul>
                 </div>
               </div>
@@ -1869,7 +1920,11 @@
           </details>
         </div>
 
+        <!-- SIDEBAR: Right-side navigation and reference content -->
         <aside class="checklist-sidebar">
+          <!-- TIPS CARD: Quick reference list of common pitfalls and best practices
+               This card provides helpful hints that apply across multiple checklist items.
+          -->
           <div class="sidebar-card">
             <h2>PCS Pitfalls and Pro Tips</h2>
             <ul class="sidebar-list">
@@ -1886,12 +1941,15 @@
       </div>
     </main>
 
+    <!-- PAGE FOOTER: Contains helpful information and legal disclaimers -->
     <footer class="site-footer">
       <div class="container">
+        <!-- FOOTER TIP: Informs users about localStorage persistence -->
         <p class="footer-tip">
           Tip: Your progress is saved automatically on this device using local
           storage.
         </p>
+        <!-- FOOTER DISCLAIMER: Legal notice reinforcing the checklist's limitations -->
         <p class="footer-disclaimer">
           This checklist is for planning purposes only and does not replace
           official guidance from your unit, transportation office, or finance
@@ -1900,6 +1958,9 @@
       </div>
     </footer>
 
+    <!-- SCRIPT INCLUSION: Links to the main feature module that powers checklist interactivity
+         This script is loaded after HTML to ensure all DOM elements exist before JavaScript runs.
+    -->
     <script src="script.js"></script>
   </body>
 </html>
