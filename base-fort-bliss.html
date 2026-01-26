@@ -1,92 +1,74 @@
 <!doctype html>
-<!-- HTML5 Document Type Declaration - tells the browser how to interpret this file -->
 <html lang="en">
-  <!-- Head section contains metadata and links to external resources -->
   <head>
-    <!-- Character encoding ensures special characters display correctly in all browsers -->
     <meta charset="UTF-8" />
-    <!-- Viewport meta tag makes the page responsive on mobile devices
-         width=device-width scales content to match device screen width
-         initial-scale=1 sets default zoom level to 100% -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Page title appears in browser tabs and search engine results -->
     <title>Fort Bliss - Army Duty Station</title>
-    <!-- Link to shared stylesheet (styles.css) that controls layout and visual styling across all pages -->
+    <!--
+      Detail page for Fort Bliss.
+    -->
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <!-- Header section appears at the top of every page (shared across the application) -->
     <header class="site-header">
       <div class="container">
-        <!-- Top navigation bar with site logo and main navigation links -->
         <div class="top-bar">
-          <!-- Brand link returns users to the home page from any location -->
           <a class="brand" href="index.html">PCS Move Planner</a>
-          <!-- Primary navigation menu - note that "Destination Bases" is marked as active
-               since this is a duty station detail page (bases.html is the parent) -->
           <nav class="site-nav">
             <a href="pcs-checklist.html">PCS Checklist</a>
             <a href="move-organizer.html">Move Organizer</a>
             <a class="is-active" href="bases.html">Destination Bases</a>
           </nav>
         </div>
-        <!-- Eyebrow text provides context above the main heading -->
         <p class="eyebrow">Army Duty Station</p>
-     !-- Main content area of the page -->
-    <main class="container">
+        <!-- Base-specific overview content for Fort Bliss. -->
+        <h1>Fort Bliss, Texas</h1>
+        <p class="subtitle">U.S. Army Installation</p>
+        <p>
+          Fort Bliss is a large Army installation in West Texas and southern New
+          Mexico that supports armored, air defense, and leader development
+          missions centered around the El Paso region.
+        </p>
+      </div>
+    </header>
 
-      <!-- First information section covering essential post services and resources -->
+    <main class="container">
       <section class="base-detail">
-        <h2>Post Information</h2>
-        <!-- Grid layout uses CSS Flexbox (defined in styles.css) to create responsive card layout
-             Cards automatically wrap to new rows on smaller screens -->
+        <h2>Post / Installation Information</h2>
         <div class="base-grid">
-          <!-- Each card represents a key facility or resource at the base -->
           <div class="base-card">
             <h3>In-Processing / Reception</h3>
             <p>
-              Arriving Soldiers typically report to the installation reception
-              or welcome center for in-processing, ID card services, and
-              administrative intake. Confirm reporting instructions in orders.
+              Arriving Soldiers typically report to the Welcome Center or
+              Replacement Detachment on main post for in-processing and
+              administrative intake.
             </p>
           </div>
           <div class="base-card">
             <h3>Commissary</h3>
             <p>
-              On-post commissary services provide groceries and household
-              essentials for eligible patrons.
+              The main post commissary provides DeCA grocery services for Fort
+              Bliss households.
             </p>
+            <a class="card-link" href="https://corp.commissaries.com/shopping/store-locations/fort-bliss">Fort Bliss Commissary</a>
           </div>
-          <!-- Cards can include external links - note the use of an external URL
-               External links should open in a new tab (see styles.css for link styling) -->
           <div class="base-card">
             <h3>PX / Exchange</h3>
             <p>
-              AAFES exchange locations provide retail, services, and dining
-              options on the installation.
+              AAFES exchange locations include Freedom Crossing and services
+              across the installation.
             </p>
             <a class="card-link" href="https://www.aafes.com/">AAFES Exchange Overview</a>
           </div>
-          <!-- Cards can contain structured lists for multiple items within a single topic -->
           <div class="base-card">
             <h3>Major Unit Areas</h3>
             <p>Major unit areas include:</p>
+            <!-- Base-specific major units for Fort Bliss. -->
             <ul class="base-units">
               <li>1st Armored Division</li>
               <li>32nd Army Air &amp; Missile Defense Command</li>
-                </p>
-            <a class="card-link" href="https://www.aafes.com/">AAFES Exchange Overview</a>
-          </div>
-          <div class="base-card">
-            <h3>Major Unit Areas</h3>
-            <p>Major unit areas include:</p>
-       !-- Second information section focusing on housing options available to military families -->
-      <section class="base-detail">
-        <h2>On-Post &amp; DoD Housing</h2>
-        <!-- Same grid layout reused from the previous section (DRY principle - reuse styles) -->
-        <div class="base-grid">
-          <!-- Housing cards provide guidance on residential options --mp; Missile Defense Command</li>
-          <li>U.S. Army Sergeants Major Academy</li>
+              <li>11th Air Defense Artillery Brigade</li>
+              <li>U.S. Army Sergeants Major Academy</li>
             </ul>
           </div>
           <div class="base-card">
@@ -95,68 +77,97 @@
               Gate access hours and ID requirements vary by entrance; verify
               current gate status before arrival.
             </p>
+            <a class="card-link" href="https://installations.militaryonesource.mil/military-installation/fort-bliss/">Fort Bliss Installation Overview</a>
           </div>
         </div>
       </section>
-
 
       <section class="base-detail">
         <h2>On-Post &amp; DoD Housing</h2>
         <div class="base-grid">
+          <!-- Base-specific housing areas. -->
           <div class="base-card">
-            <h3>Official Housing Overview</h3>
+            <h3>Main Post Neighborhoods</h3>
             <p>
-              Installation housing offices manage applications, waitlists, and
-              privatized housing partners for on-post residents.
+              Family housing neighborhoods on the main post serve Soldiers and
+              families near core services.
             </p>
+            <a class="card-link" href="https://installations.militaryonesource.mil/military-installation/fort-bliss/housing">Fort Bliss Housing</a>
           </div>
           <div class="base-card">
-            <h3>On-Post Housing Areas</h3>
+            <h3>East Bliss &amp; Logan Heights Housing</h3>
             <p>
-              Family housing neighborhoods and barracks areas are distributed
-              across the main installation.
+              Housing areas on the east side of the installation support units
+              near training and range operations.
             </p>
-          </div>
-       !-- Third information section providing geographic context about the region -->
-      <section class="base-detail">
-        <h2>Nearby Cities &amp; Towns (Within ~45 Minutes)</h2>
-        <!-- Same reusable grid layout for consistency across all sections -->
-        <div class="base-grid">
-          <!-- Community cards help military families explore civilian areas near the base -->
-          <div class="base-card">
-            <h3>El Paso</h3>
-            <p>Primary city adjacent to the installation.</p>
+            <a class="card-link" href="https://installations.militaryonesource.mil/military-installation/fort-bliss/housing">Fort Bliss Housing</a>
           </div>
           <div class="base-card">
-            <h3>Horizon City</h3>
-            <p>Suburb east of El Paso.</p>
-          </div>
-          <div class="base-card">
-            <h3>Socorro</h3>
-            <p>Community southeast of central El Paso.</p>
-          </div>
-          <div class="base-card">
-            <h3>Sunland Park</h3>
-            <p>Nearby New Mexico community west of El Paso.</p>
-          </div>
-          <div class="base-card">
-            <h3>Las Cruces</h3>
-            <p>City in southern New Mexico within driving distance.</p>
+            <h3>Biggs Army Airfield Communities</h3>
+            <p>
+              DoD-managed housing near Biggs Army Airfield provides additional
+              on-post family options.
+            </p>
+            <a class="card-link" href="https://installations.militaryonesource.mil/military-installation/fort-bliss/housing">Fort Bliss Housing</a>
           </div>
         </div>
       </section>
 
-      <!-- Navigation link to return users to the base index page (bases.html)
-           Using the &larr; HTML entity for a left arrow symbol -->
-      <a class="back-link" href="bases.html">&larr; Back to Army Duty Stations</a>
-    </main>
-
-    <!-- Footer section appears at the bottom of every page (shared across the application) -->
-    <footer class="site-footer">
-      <div class="container">
-        <!-- Footer message reinforces the purpose of the application --ard">
-            <h3>Las Cruces</h3>
-            <p>City in southern New Mexico within driving distance.</p>
+      <section class="base-detail">
+        <h2>Nearby Cities &amp; Towns (Within ~45 Minutes)</h2>
+        <div class="base-grid">
+          <!-- Base-specific nearby communities for Fort Bliss. -->
+          <div class="base-card">
+            <h3>El Paso</h3>
+            <p>Primary city adjacent to the installation (~5-20 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Horizon City</h3>
+            <p>Suburb east of El Paso (~25-35 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Socorro</h3>
+            <p>Community southeast of central El Paso (~20-30 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>San Elizario</h3>
+            <p>Riverside community southeast of El Paso (~30-40 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Clint</h3>
+            <p>Small town in the Lower Valley (~30-40 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Sunland Park, NM</h3>
+            <p>New Mexico community west of El Paso (~20-30 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Santa Teresa, NM</h3>
+            <p>Border community northwest of El Paso (~30-40 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Las Cruces, NM</h3>
+            <p>City in southern New Mexico within driving distance (~40-45 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Canutillo</h3>
+            <p>Community northwest of El Paso (~20-30 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Anthony, TX/NM</h3>
+            <p>Border towns in the Upper Valley (~30-40 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Fabens</h3>
+            <p>Lower Valley community southeast of El Paso (~35-45 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Vinton</h3>
+            <p>Small town west of El Paso near the river (~30-40 min).</p>
+          </div>
+          <div class="base-card">
+            <h3>Chaparral, NM</h3>
+            <p>New Mexico community north of El Paso (~30-40 min).</p>
           </div>
         </div>
       </section>
