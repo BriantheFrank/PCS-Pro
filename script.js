@@ -140,6 +140,8 @@ const roomForm = document.querySelector("#room-form");
 const roomNameInput = document.querySelector("#room-name");
 const roomsContainer = document.querySelector("#rooms-container");
 const totalWeightDisplay = document.querySelector("#total-weight");
+const highValueList = document.querySelector("#high-value-list");
+const highValueEmpty = document.querySelector("#high-value-empty");
 
 if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   let inventory = loadInventory();
@@ -223,6 +225,10 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     item.weight = coerceWeight(item.weight, categoryDefinition.defaultWeight);
     if (typeof item.includeInEstimate !== "boolean") {
       item.includeInEstimate = true;
+    }
+    // High-value flag defaults to false so existing inventories remain valid.
+    if (typeof item.isHighValue !== "boolean") {
+      item.isHighValue = false;
     }
     if (!item.editMode) {
       item.editMode = null;
@@ -378,6 +384,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
               .map((item, itemIndex) => {
                 const categoryOptions = buildCategoryOptions(item.category);
                 const isIncluded = item.includeInEstimate;
+                const isHighValue = item.isHighValue;
                 const editMode = item.editMode || null;
                 return `
                   <li class="inventory-item ${
@@ -464,6 +471,16 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
                             ${isIncluded ? "checked" : ""}
                           />
                           <span>Include in weight estimate</span>
+                        </label>
+                        <label class="inventory-item-field inventory-item-checkbox">
+                          <input
+                            type="checkbox"
+                            data-field="high-value"
+                            data-room-index="${roomIndex}"
+                            data-item-index="${itemIndex}"
+                            ${isHighValue ? "checked" : ""}
+                          />
+                          <span>High value item</span>
                         </label>
                       </div>
                       ${
@@ -680,6 +697,50 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     `;
   };
 
+  // High-value summary list stays in sync with the inventory state.
+  const renderHighValueSummary = () => {
+    if (!highValueList || !highValueEmpty) {
+      return;
+    }
+    const highValueItems = [];
+    inventory.rooms.forEach((room) => {
+      room.items.forEach((item) => {
+        ensureItemDefaults(item);
+        if (item.isHighValue) {
+          highValueItems.push({ item, roomName: room.name });
+        }
+      });
+    });
+
+    if (highValueItems.length === 0) {
+      highValueList.innerHTML = "";
+      highValueEmpty.hidden = false;
+      return;
+    }
+
+    highValueEmpty.hidden = true;
+    highValueList.innerHTML = highValueItems
+      .map(({ item, roomName }) => {
+        const weightLabel = Number.isFinite(item.weight)
+          ? `${item.weight} lbs`
+          : "";
+        return `
+          <li class="inventory-high-value-item">
+            <div class="inventory-high-value-details">
+              <strong>${item.label}</strong>
+              <span class="inventory-high-value-room">${roomName}</span>
+            </div>
+            ${
+              weightLabel
+                ? `<span class="inventory-high-value-weight">${weightLabel}</span>`
+                : ""
+            }
+          </li>
+        `;
+      })
+      .join("");
+  };
+
   // Render all rooms based on current search query and stored state.
   const renderRooms = () => {
     if (!currentQuery) {
@@ -701,6 +762,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
           </p>
         </section>
       `;
+      renderHighValueSummary();
       return;
     }
 
@@ -713,6 +775,7 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     if (totalWeightDisplay) {
       totalWeightDisplay.textContent = `${inventory.totalWeight} lbs`;
     }
+    renderHighValueSummary();
   };
 
   // Add a room to the inventory state.
@@ -752,6 +815,8 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
       notes,
       weight: categoryDefinition.defaultWeight,
       includeInEstimate: true,
+      // High-value flag stays false unless explicitly marked by the user.
+      isHighValue: false,
     };
     inventory.rooms[roomIndex].items.push(newItem);
     syncInventoryState();
@@ -786,6 +851,10 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
     }
     if (target.dataset.field === "include") {
       item.includeInEstimate = target.checked;
+    }
+    if (target.dataset.field === "high-value") {
+      // Update the high-value summary list immediately when toggled.
+      item.isHighValue = target.checked;
     }
     syncInventoryState();
     renderRooms();
