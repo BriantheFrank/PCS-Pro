@@ -1401,3 +1401,352 @@ if (inventorySearch && roomForm && roomNameInput && roomsContainer) {
   syncInventoryState();
   renderRooms();
 }
+
+// Move logistics calendar + accordion events.
+const calendarGrid = document.querySelector("#calendar-grid");
+const calendarLabel = document.querySelector("#calendar-label");
+const calendarToggleButtons = Array.from(
+  document.querySelectorAll("[data-view]")
+);
+const calendarNavButtons = Array.from(
+  document.querySelectorAll("[data-nav]")
+);
+const logisticsSections = Array.from(
+  document.querySelectorAll(".logistics-section[data-event-id]")
+);
+const itineraryStopsContainer = document.querySelector("#itinerary-stops");
+const itineraryTemplate = document.querySelector("#itinerary-stop-template");
+const addItineraryStopButton = document.querySelector("#add-itinerary-stop");
+
+if (calendarGrid && calendarLabel) {
+  const calendarState = {
+    view: "month",
+    focusDate: new Date(),
+  };
+  const events = new Map();
+
+  const toDateKey = (date) =>
+    [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+      String(date.getDate()).padStart(2, "0"),
+    ].join("-");
+
+  const parseTime = (value) => {
+    if (!value) {
+      return "";
+    }
+    const [hours, minutes] = value.split(":").map(Number);
+    const clock = new Date();
+    clock.setHours(hours, minutes || 0, 0, 0);
+    return clock.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
+
+  const startOfWeek = (date) => {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - start.getDay());
+    return start;
+  };
+
+  const endOfWeek = (date) => {
+    const end = startOfWeek(date);
+    end.setDate(end.getDate() + 6);
+    return end;
+  };
+
+  const updateCalendarLabel = (startDate, endDate) => {
+    if (calendarState.view === "month") {
+      calendarLabel.textContent = new Intl.DateTimeFormat("en-US", {
+        month: "long",
+        year: "numeric",
+      }).format(calendarState.focusDate);
+      return;
+    }
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+    calendarLabel.textContent = `Week of ${formatter.format(
+      startDate
+    )} – ${formatter.format(endDate)}`;
+  };
+
+  const renderCalendar = () => {
+    const focusDate = calendarState.focusDate;
+    const monthStart = new Date(focusDate.getFullYear(), focusDate.getMonth(), 1);
+    const monthEnd = new Date(focusDate.getFullYear(), focusDate.getMonth() + 1, 0);
+    let startDate = monthStart;
+    let endDate = monthEnd;
+
+    if (calendarState.view === "month") {
+      startDate = startOfWeek(monthStart);
+      endDate = endOfWeek(monthEnd);
+    } else {
+      startDate = startOfWeek(focusDate);
+      endDate = endOfWeek(focusDate);
+    }
+
+    updateCalendarLabel(startDate, endDate);
+    calendarGrid.innerHTML = "";
+
+    const eventsByDate = {};
+    events.forEach((event) => {
+      if (!event.date) {
+        return;
+      }
+      if (!eventsByDate[event.date]) {
+        eventsByDate[event.date] = [];
+      }
+      eventsByDate[event.date].push(event);
+    });
+
+    Object.values(eventsByDate).forEach((dayEvents) => {
+      dayEvents.sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+    });
+
+    const dayIterator = new Date(startDate);
+    const todayKey = toDateKey(new Date());
+
+    while (dayIterator <= endDate) {
+      const dayKey = toDateKey(dayIterator);
+      const dayCell = document.createElement("div");
+      dayCell.className = "calendar-day";
+      dayCell.setAttribute("role", "gridcell");
+
+      if (calendarState.view === "month" && dayIterator.getMonth() !== focusDate.getMonth()) {
+        dayCell.classList.add("is-outside");
+      }
+      if (dayKey === todayKey) {
+        dayCell.classList.add("is-today");
+      }
+
+      const header = document.createElement("div");
+      header.className = "calendar-day-header";
+      header.textContent = dayIterator.toLocaleDateString("en-US", {
+        weekday: "short",
+        day: "numeric",
+      });
+      dayCell.appendChild(header);
+
+      const eventList = document.createElement("div");
+      eventList.className = "calendar-events";
+      const dayEvents = eventsByDate[dayKey] || [];
+      dayEvents.forEach((event) => {
+        const eventCard = document.createElement("div");
+        eventCard.className = "calendar-event";
+
+        const title = document.createElement("div");
+        title.className = "calendar-event-title";
+        title.textContent = event.title;
+        eventCard.appendChild(title);
+
+        const metaPieces = [];
+        if (event.time) {
+          metaPieces.push(parseTime(event.time));
+        }
+        if (event.location) {
+          metaPieces.push(event.location);
+        }
+        if (metaPieces.length > 0) {
+          const meta = document.createElement("div");
+          meta.className = "calendar-event-meta";
+          meta.textContent = metaPieces.join(" • ");
+          eventCard.appendChild(meta);
+        }
+
+        eventList.appendChild(eventCard);
+      });
+
+      dayCell.appendChild(eventList);
+      calendarGrid.appendChild(dayCell);
+
+      dayIterator.setDate(dayIterator.getDate() + 1);
+    }
+  };
+
+  const upsertEvent = (event) => {
+    events.set(event.id, event);
+    renderCalendar();
+  };
+
+  const removeEvent = (eventId) => {
+    if (events.has(eventId)) {
+      events.delete(eventId);
+      renderCalendar();
+    }
+  };
+
+  const updateEventFromSection = (section) => {
+    const eventId = section.dataset.eventId;
+    const title = section.dataset.eventTitle;
+    const dateInput = section.querySelector("[data-role='date']");
+    const timeInput = section.querySelector("[data-role='time']");
+    const locationInput = section.querySelector("[data-role='location']");
+    const notesInput = section.querySelector("[data-role='notes']");
+
+    if (!dateInput || !title || !eventId) {
+      return;
+    }
+
+    const dateValue = dateInput.value;
+    if (!dateValue) {
+      removeEvent(eventId);
+      return;
+    }
+
+    upsertEvent({
+      id: eventId,
+      title,
+      date: dateValue,
+      time: timeInput ? timeInput.value : "",
+      location: locationInput ? locationInput.value.trim() : "",
+      notes: notesInput ? notesInput.value.trim() : "",
+    });
+  };
+
+  const attachSectionListeners = (section) => {
+    const inputs = Array.from(
+      section.querySelectorAll(
+        "[data-role='date'], [data-role='time'], [data-role='location'], [data-role='notes']"
+      )
+    );
+
+    inputs.forEach((input) => {
+      input.addEventListener("input", () => updateEventFromSection(section));
+      input.addEventListener("change", () => updateEventFromSection(section));
+    });
+
+    const clearButton = section.querySelector("[data-action='clear-event']");
+    const dateInput = section.querySelector("[data-role='date']");
+    const timeInput = section.querySelector("[data-role='time']");
+
+    if (clearButton && dateInput) {
+      clearButton.addEventListener("click", () => {
+        dateInput.value = "";
+        if (timeInput) {
+          timeInput.value = "";
+        }
+        updateEventFromSection(section);
+      });
+    }
+  };
+
+  logisticsSections.forEach((section) => {
+    attachSectionListeners(section);
+  });
+
+  const renderItineraryStop = () => {
+    if (!itineraryStopsContainer || !itineraryTemplate) {
+      return;
+    }
+    const clone = itineraryTemplate.content.cloneNode(true);
+    const stopElement = clone.querySelector(".itinerary-stop");
+    if (!stopElement) {
+      return;
+    }
+    const stopId = `stop-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    stopElement.dataset.stopId = stopId;
+
+    const updateStopEvent = () => {
+      const dateInput = stopElement.querySelector("[data-role='stop-date']");
+      const cityInput = stopElement.querySelector("[data-role='stop-city']");
+      const lodgingInput = stopElement.querySelector("[data-role='stop-lodging']");
+      const calendarToggle = stopElement.querySelector("[data-role='stop-calendar']");
+
+      if (!dateInput || !calendarToggle) {
+        return;
+      }
+
+      const eventId = `itinerary-${stopId}`;
+      if (!calendarToggle.checked || !dateInput.value) {
+        removeEvent(eventId);
+        return;
+      }
+
+      const city = cityInput ? cityInput.value.trim() : "";
+      const lodging = lodgingInput ? lodgingInput.value.trim() : "";
+      const title = city ? `Itinerary stop: ${city}` : "Itinerary stop";
+      const locationDetail = lodging || city;
+
+      upsertEvent({
+        id: eventId,
+        title,
+        date: dateInput.value,
+        time: "",
+        location: locationDetail,
+      });
+    };
+
+    const inputs = Array.from(
+      stopElement.querySelectorAll(
+        "[data-role='stop-city'], [data-role='stop-date'], [data-role='stop-lodging'], [data-role='stop-calendar']"
+      )
+    );
+
+    inputs.forEach((input) => {
+      input.addEventListener("input", updateStopEvent);
+      input.addEventListener("change", updateStopEvent);
+    });
+
+    const removeButton = stopElement.querySelector("[data-action='remove-stop']");
+    if (removeButton) {
+      removeButton.addEventListener("click", () => {
+        removeEvent(`itinerary-${stopId}`);
+        stopElement.remove();
+      });
+    }
+
+    itineraryStopsContainer.appendChild(stopElement);
+  };
+
+  if (addItineraryStopButton) {
+    addItineraryStopButton.addEventListener("click", renderItineraryStop);
+  }
+
+  calendarToggleButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const newView = button.dataset.view;
+      if (!newView || newView === calendarState.view) {
+        return;
+      }
+      calendarState.view = newView;
+      calendarToggleButtons.forEach((toggle) => {
+        toggle.classList.toggle("is-active", toggle.dataset.view === newView);
+      });
+      renderCalendar();
+    });
+  });
+
+  calendarNavButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.nav;
+      const newDate = new Date(calendarState.focusDate);
+
+      switch (action) {
+        case "prev-month":
+          newDate.setMonth(newDate.getMonth() - 1);
+          break;
+        case "next-month":
+          newDate.setMonth(newDate.getMonth() + 1);
+          break;
+        case "prev-week":
+          newDate.setDate(newDate.getDate() - 7);
+          break;
+        case "next-week":
+          newDate.setDate(newDate.getDate() + 7);
+          break;
+        default:
+          return;
+      }
+
+      calendarState.focusDate = newDate;
+      renderCalendar();
+    });
+  });
+
+  renderCalendar();
+}
