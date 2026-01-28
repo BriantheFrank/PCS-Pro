@@ -913,6 +913,247 @@ main {
   gap: 0.5rem;
 }
 
+/* Move logistics page styling. */
+.logistics-layout {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.calendar-panel {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.calendar-panel-header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.calendar-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.calendar-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calendar-toggle-group {
+  display: inline-flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.calendar-toggle,
+.calendar-nav-button {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.calendar-toggle.is-active,
+.calendar-toggle:hover,
+.calendar-toggle:focus-visible,
+.calendar-nav-button:hover,
+.calendar-nav-button:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.calendar-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.calendar-meta h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.calendar-day {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.6rem;
+  background: var(--bg);
+  display: grid;
+  gap: 0.45rem;
+  min-height: 120px;
+}
+
+.calendar-day-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.calendar-day.is-outside {
+  opacity: 0.6;
+}
+
+.calendar-day.is-today {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.calendar-events {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.calendar-event {
+  border-radius: 10px;
+  padding: 0.4rem 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 0.15rem;
+  font-size: 0.8rem;
+}
+
+.calendar-event-title {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.calendar-event-meta {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.logistics-accordion {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.logistics-section-body {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.logistics-form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.logistics-group h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+}
+
+.logistics-field-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.logistics-field {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.logistics-field input,
+.logistics-field textarea {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.logistics-field textarea {
+  resize: vertical;
+}
+
+.logistics-hint {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.itinerary-group {
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+}
+
+.itinerary-stops {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.itinerary-stop {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+  background: var(--surface);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.itinerary-stop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.itinerary-stop-header h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.logistics-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.logistics-checkbox input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--accent);
+}
+
+.link-button {
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link-button:hover,
+.link-button:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
 .label-action {
   border: 1px solid var(--accent);
   border-radius: 999px;

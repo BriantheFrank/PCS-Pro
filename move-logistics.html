@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Move Logistics</title>
+    <!--
+      Move logistics page for tracking calendar events and key contacts.
+    -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <!--
+          Shared navigation keeps the site connected.
+        -->
+        <div class="top-bar">
+          <a class="brand" href="index.html">PCS Move Planner</a>
+          <nav class="site-nav">
+            <a href="pcs-checklist.html">PCS Checklist</a>
+            <a class="is-active" href="move-organizer.html">Move Organizer</a>
+            <a href="bases.html">Destination Bases</a>
+          </nav>
+        </div>
+        <p class="eyebrow">Move Organizer</p>
+        <h1>Move Logistics</h1>
+        <p class="subtitle">
+          Organize moving-related events, schedules, and contacts in one place.
+          This page is designed for both military and non-military family members
+          and avoids jargon whenever possible.
+        </p>
+      </div>
+    </header>
+
+    <main class="container logistics-layout">
+      <a class="back-link" href="move-organizer.html">← Back to Move Organizer</a>
+
+      <section class="info-panel calendar-panel" aria-labelledby="calendar-title">
+        <div class="calendar-panel-header">
+          <div>
+            <p class="eyebrow">Master Calendar</p>
+            <h2 id="calendar-title">Master Calendar</h2>
+          </div>
+          <p class="calendar-hint">
+            Events you add in the sections below will appear here automatically.
+          </p>
+        </div>
+
+        <div class="calendar-toolbar">
+          <div class="calendar-toggle-group" role="group" aria-label="Calendar view">
+            <button
+              class="calendar-toggle is-active"
+              type="button"
+              data-view="month"
+            >
+              Monthly
+            </button>
+            <button class="calendar-toggle" type="button" data-view="week">
+              Weekly
+            </button>
+          </div>
+          <div class="calendar-nav">
+            <button class="calendar-nav-button" type="button" data-nav="prev-month">
+              ← Previous month
+            </button>
+            <button class="calendar-nav-button" type="button" data-nav="next-month">
+              Next month →
+            </button>
+            <button class="calendar-nav-button" type="button" data-nav="prev-week">
+              ← Previous week
+            </button>
+            <button class="calendar-nav-button" type="button" data-nav="next-week">
+              Next week →
+            </button>
+          </div>
+        </div>
+
+        <div class="calendar-meta">
+          <h3 id="calendar-label"></h3>
+        </div>
+
+        <div class="calendar-grid" id="calendar-grid" role="grid"></div>
+      </section>
+
+      <section class="logistics-accordion" aria-label="Move logistics events">
+        <details
+          class="checklist-section logistics-section"
+          data-event-id="move-consult"
+          data-event-title="Move Consult"
+        >
+          <summary>
+            <h2>Move Consult</h2>
+          </summary>
+          <div class="checklist-section-body logistics-section-body">
+            <p class="checklist-intro">
+              Record the consultation that kicks off your move planning and sets
+              expectations for the timeline.
+            </p>
+            <div class="logistics-form">
+              <div class="logistics-group">
+                <h3>Contact Information</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Name
+                    <input type="text" data-role="contact-name" />
+                  </label>
+                  <label class="logistics-field">
+                    Company (if applicable)
+                    <input type="text" data-role="contact-company" />
+                  </label>
+                  <label class="logistics-field">
+                    Phone number
+                    <input type="tel" data-role="contact-phone" />
+                  </label>
+                  <label class="logistics-field">
+                    Email address
+                    <input type="email" data-role="contact-email" />
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Event Details</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Location
+                    <input type="text" data-role="location" />
+                  </label>
+                  <label class="logistics-field">
+                    Date
+                    <input type="date" data-role="date" />
+                  </label>
+                  <label class="logistics-field">
+                    Time
+                    <input type="time" data-role="time" />
+                  </label>
+                  <label class="logistics-field">
+                    Notes (optional)
+                    <textarea rows="2" data-role="notes"></textarea>
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Calendar Integration</h3>
+                <p class="logistics-hint">
+                  Add a date and time to place this event on the master calendar.
+                </p>
+                <button type="button" class="label-action secondary" data-action="clear-event">
+                  Clear event from calendar
+                </button>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details
+          class="checklist-section logistics-section"
+          data-event-id="packers"
+          data-event-title="Packers"
+        >
+          <summary>
+            <h2>Packers</h2>
+          </summary>
+          <div class="checklist-section-body logistics-section-body">
+            <p class="checklist-intro">
+              Use this section to track the team packing your household items and
+              confirm their arrival window.
+            </p>
+            <div class="logistics-form">
+              <div class="logistics-group">
+                <h3>Contact Information</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Name
+                    <input type="text" data-role="contact-name" />
+                  </label>
+                  <label class="logistics-field">
+                    Company (if applicable)
+                    <input type="text" data-role="contact-company" />
+                  </label>
+                  <label class="logistics-field">
+                    Phone number
+                    <input type="tel" data-role="contact-phone" />
+                  </label>
+                  <label class="logistics-field">
+                    Email address
+                    <input type="email" data-role="contact-email" />
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Event Details</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Location
+                    <input type="text" data-role="location" />
+                  </label>
+                  <label class="logistics-field">
+                    Date
+                    <input type="date" data-role="date" />
+                  </label>
+                  <label class="logistics-field">
+                    Time
+                    <input type="time" data-role="time" />
+                  </label>
+                  <label class="logistics-field">
+                    Notes (optional)
+                    <textarea rows="2" data-role="notes"></textarea>
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Calendar Integration</h3>
+                <p class="logistics-hint">
+                  Add a date and time to place this event on the master calendar.
+                </p>
+                <button type="button" class="label-action secondary" data-action="clear-event">
+                  Clear event from calendar
+                </button>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details
+          class="checklist-section logistics-section"
+          data-event-id="load-truck"
+          data-event-title="Load Truck"
+        >
+          <summary>
+            <h2>Load Truck</h2>
+          </summary>
+          <div class="checklist-section-body logistics-section-body">
+            <p class="checklist-intro">
+              Capture the date and arrival time for the truck or crew loading
+              your household items.
+            </p>
+            <div class="logistics-form">
+              <div class="logistics-group">
+                <h3>Contact Information</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Name
+                    <input type="text" data-role="contact-name" />
+                  </label>
+                  <label class="logistics-field">
+                    Company (if applicable)
+                    <input type="text" data-role="contact-company" />
+                  </label>
+                  <label class="logistics-field">
+                    Phone number
+                    <input type="tel" data-role="contact-phone" />
+                  </label>
+                  <label class="logistics-field">
+                    Email address
+                    <input type="email" data-role="contact-email" />
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Event Details</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Location
+                    <input type="text" data-role="location" />
+                  </label>
+                  <label class="logistics-field">
+                    Date
+                    <input type="date" data-role="date" />
+                  </label>
+                  <label class="logistics-field">
+                    Time
+                    <input type="time" data-role="time" />
+                  </label>
+                  <label class="logistics-field">
+                    Notes (optional)
+                    <textarea rows="2" data-role="notes"></textarea>
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Calendar Integration</h3>
+                <p class="logistics-hint">
+                  Add a date and time to place this event on the master calendar.
+                </p>
+                <button type="button" class="label-action secondary" data-action="clear-event">
+                  Clear event from calendar
+                </button>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details
+          class="checklist-section logistics-section"
+          data-event-id="household-goods-delivery"
+          data-event-title="Household Goods Delivery at Destination"
+        >
+          <summary>
+            <h2>Household Goods Delivery at Destination</h2>
+          </summary>
+          <div class="checklist-section-body logistics-section-body">
+            <p class="checklist-intro">
+              Household Goods (HHG) refers to the furniture and personal items
+              moved during a relocation. Use this section to track delivery at
+              your destination.
+            </p>
+            <div class="logistics-form">
+              <div class="logistics-group">
+                <h3>Contact Information</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Name
+                    <input type="text" data-role="contact-name" />
+                  </label>
+                  <label class="logistics-field">
+                    Company (if applicable)
+                    <input type="text" data-role="contact-company" />
+                  </label>
+                  <label class="logistics-field">
+                    Phone number
+                    <input type="tel" data-role="contact-phone" />
+                  </label>
+                  <label class="logistics-field">
+                    Email address
+                    <input type="email" data-role="contact-email" />
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Event Details</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Location
+                    <input type="text" data-role="location" />
+                  </label>
+                  <label class="logistics-field">
+                    Date
+                    <input type="date" data-role="date" />
+                  </label>
+                  <label class="logistics-field">
+                    Time
+                    <input type="time" data-role="time" />
+                  </label>
+                  <label class="logistics-field">
+                    Notes (optional)
+                    <textarea rows="2" data-role="notes"></textarea>
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Calendar Integration</h3>
+                <p class="logistics-hint">
+                  Add a date and time to place this event on the master calendar.
+                </p>
+                <button type="button" class="label-action secondary" data-action="clear-event">
+                  Clear event from calendar
+                </button>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details
+          class="checklist-section logistics-section"
+          data-event-id="family-departure"
+          data-event-title="Family Departure"
+        >
+          <summary>
+            <h2>Family Departure</h2>
+          </summary>
+          <div class="checklist-section-body logistics-section-body">
+            <p class="checklist-intro">
+              Track the date and time when the household leaves the current
+              location so everyone stays aligned.
+            </p>
+            <div class="logistics-form">
+              <div class="logistics-group">
+                <h3>Contact Information</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Name
+                    <input type="text" data-role="contact-name" />
+                  </label>
+                  <label class="logistics-field">
+                    Company (if applicable)
+                    <input type="text" data-role="contact-company" />
+                  </label>
+                  <label class="logistics-field">
+                    Phone number
+                    <input type="tel" data-role="contact-phone" />
+                  </label>
+                  <label class="logistics-field">
+                    Email address
+                    <input type="email" data-role="contact-email" />
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Event Details</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Location
+                    <input type="text" data-role="location" />
+                  </label>
+                  <label class="logistics-field">
+                    Date
+                    <input type="date" data-role="date" />
+                  </label>
+                  <label class="logistics-field">
+                    Time
+                    <input type="time" data-role="time" />
+                  </label>
+                  <label class="logistics-field">
+                    Notes (optional)
+                    <textarea rows="2" data-role="notes"></textarea>
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Calendar Integration</h3>
+                <p class="logistics-hint">
+                  Add a date and time to place this event on the master calendar.
+                </p>
+                <button type="button" class="label-action secondary" data-action="clear-event">
+                  Clear event from calendar
+                </button>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details
+          class="checklist-section logistics-section"
+          data-event-id="family-arrival"
+          data-event-title="Family Arrival"
+        >
+          <summary>
+            <h2>Family Arrival</h2>
+          </summary>
+          <div class="checklist-section-body logistics-section-body">
+            <p class="checklist-intro">
+              Note when the family arrives at the destination so housing,
+              lodging, and childcare can be coordinated.
+            </p>
+            <div class="logistics-form">
+              <div class="logistics-group">
+                <h3>Contact Information</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Name
+                    <input type="text" data-role="contact-name" />
+                  </label>
+                  <label class="logistics-field">
+                    Company (if applicable)
+                    <input type="text" data-role="contact-company" />
+                  </label>
+                  <label class="logistics-field">
+                    Phone number
+                    <input type="tel" data-role="contact-phone" />
+                  </label>
+                  <label class="logistics-field">
+                    Email address
+                    <input type="email" data-role="contact-email" />
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Event Details</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Location
+                    <input type="text" data-role="location" />
+                  </label>
+                  <label class="logistics-field">
+                    Date
+                    <input type="date" data-role="date" />
+                  </label>
+                  <label class="logistics-field">
+                    Time
+                    <input type="time" data-role="time" />
+                  </label>
+                  <label class="logistics-field">
+                    Notes (optional)
+                    <textarea rows="2" data-role="notes"></textarea>
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Calendar Integration</h3>
+                <p class="logistics-hint">
+                  Add a date and time to place this event on the master calendar.
+                </p>
+                <button type="button" class="label-action secondary" data-action="clear-event">
+                  Clear event from calendar
+                </button>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details
+          class="checklist-section logistics-section"
+          data-event-id="family-itinerary"
+          data-event-title="Family Itinerary During the Move"
+        >
+          <summary>
+            <h2>Family Itinerary During the Move</h2>
+          </summary>
+          <div class="checklist-section-body logistics-section-body">
+            <p class="checklist-intro">
+              Capture the overall travel plan and log each overnight stop so the
+              whole family knows where to be and when.
+            </p>
+            <div class="logistics-form">
+              <div class="logistics-group">
+                <h3>Contact Information</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Name
+                    <input type="text" data-role="contact-name" />
+                  </label>
+                  <label class="logistics-field">
+                    Company (if applicable)
+                    <input type="text" data-role="contact-company" />
+                  </label>
+                  <label class="logistics-field">
+                    Phone number
+                    <input type="tel" data-role="contact-phone" />
+                  </label>
+                  <label class="logistics-field">
+                    Email address
+                    <input type="email" data-role="contact-email" />
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Event Details</h3>
+                <div class="logistics-field-grid">
+                  <label class="logistics-field">
+                    Location
+                    <input type="text" data-role="location" />
+                  </label>
+                  <label class="logistics-field">
+                    Date
+                    <input type="date" data-role="date" />
+                  </label>
+                  <label class="logistics-field">
+                    Time
+                    <input type="time" data-role="time" />
+                  </label>
+                  <label class="logistics-field">
+                    Notes (optional)
+                    <textarea rows="2" data-role="notes"></textarea>
+                  </label>
+                </div>
+              </div>
+              <div class="logistics-group">
+                <h3>Calendar Integration</h3>
+                <p class="logistics-hint">
+                  Add a date and time to place this event on the master calendar.
+                </p>
+                <button type="button" class="label-action secondary" data-action="clear-event">
+                  Clear event from calendar
+                </button>
+              </div>
+
+              <div class="logistics-group itinerary-group">
+                <h3>Itinerary Stops</h3>
+                <p class="logistics-hint">
+                  Add one stop per overnight stay. You can also add each stop to
+                  the master calendar.
+                </p>
+                <div class="itinerary-stops" id="itinerary-stops"></div>
+                <button type="button" class="label-action" id="add-itinerary-stop">
+                  Add overnight stop
+                </button>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>
+          Tip: Keep travel contacts and key delivery dates updated so the whole
+          household has the same information.
+        </p>
+      </div>
+    </footer>
+
+    <template id="itinerary-stop-template">
+      <div class="itinerary-stop" data-stop-id="">
+        <div class="itinerary-stop-header">
+          <h4>Overnight Stop</h4>
+          <button type="button" class="link-button" data-action="remove-stop">
+            Remove stop
+          </button>
+        </div>
+        <div class="logistics-field-grid">
+          <label class="logistics-field">
+            City / Location
+            <input type="text" data-role="stop-city" />
+          </label>
+          <label class="logistics-field">
+            Date
+            <input type="date" data-role="stop-date" />
+          </label>
+          <label class="logistics-field">
+            Lodging name
+            <input type="text" data-role="stop-lodging" />
+          </label>
+          <label class="logistics-field">
+            Lodging address
+            <input type="text" data-role="stop-address" />
+          </label>
+          <label class="logistics-field">
+            Lodging phone number
+            <input type="tel" data-role="stop-phone" />
+          </label>
+          <label class="logistics-field">
+            Notes (optional)
+            <textarea rows="2" data-role="stop-notes"></textarea>
+          </label>
+        </div>
+        <label class="logistics-checkbox">
+          <input type="checkbox" data-role="stop-calendar" />
+          Add this stop to the master calendar
+        </label>
+      </div>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
